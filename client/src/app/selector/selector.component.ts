@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RequestService } from '../request.service';
 
 @Component({
   selector: 'app-selector',
@@ -7,13 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SelectorComponent implements OnInit {
 
-  constructor() { }
+  constructor(private requestService: RequestService) { }
 
   ngOnInit(): void {
   }
 
   onSelect(requestedColor: string) {
-    console.log("Requested " + requestedColor);
+    this.requestService.requestColor(requestedColor);
   }
 
 }
