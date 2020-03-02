@@ -12,4 +12,8 @@ export class SelectorComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onSelect(requestedColor: string) {
+    console.log("Requested " + requestedColor);
+  }
+
 }

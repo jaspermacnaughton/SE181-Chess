@@ -1,1 +1,30 @@
-<p>selector works!</p>
+
+<div class="row" style="margin: auto;">
+  <div class="col-md-6">
+    <button
+      style="cursor: pointer;"
+      class="list-group-item clearfix"
+      (click)="onSelect('white')">
+      <img
+        src="../../assets/images/whiteKnight.png"
+        alt="white icon"
+        class="img-responsive"
+        style="max-height: 100px;">
+      <h4>White</h4>
+    </button>
+  </div>
+  <div class="col-md-6">
+    <button
+      style="cursor: pointer;"
+      class="list-group-item clearfix"
+      (click)="onSelect('black')">
+      <img
+        src="../../assets/images/blackKnight.png"
+        alt="black icon"
+        class="img-responsive"
+        style="max-height: 100px;">
+      <h4>Black</h4>
+    </button>
+  </div>
+</div>
+
