@@ -7,12 +7,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SelectorComponent } from './selector/selector.component';
 import { GameComponent } from './game/game.component';
 import { HttpClientModule } from '@angular/common/http';
+import { SquareComponent } from './game/square/square.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SelectorComponent,
-    GameComponent
+    GameComponent,
+    SquareComponent
   ],
   imports: [
     BrowserModule,

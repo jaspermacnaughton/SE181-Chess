@@ -1,1 +1,16 @@
-<h2>Playing as {{color}}:</h2>
+
+<!-- <h2>Playing as {{color}}:</h2> -->
+
+<div class="chessboard">
+  <div
+    class="row"
+    style="margin: auto;"
+    *ngFor="let row of [8, 7, 6, 5, 4, 3, 2, 1]">
+      <div class="col-md-1.5" *ngFor="let col of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']">
+        <div class="{{getSquareColor(row, col)}}"
+          (click)="onClickSquare(row, col)"
+          [innerHTML]="getInLocation(row, col)">
+        </div><!--  {{row + " " + col}}-->
+      </div>
+  </div>
+</div>
