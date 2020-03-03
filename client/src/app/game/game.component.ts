@@ -51,7 +51,7 @@ export class GameComponent implements OnInit {
     // this.gameState = this.requestService.
   }
 
-  getSquareColor(row: number, col: string): string {
+  getSquareBackground(row: number, col: string): string {
     let classString = "square";
     if (row % 2 === 0) {
       if (['a', 'c', 'e', 'g'].includes(col)) {
@@ -66,14 +66,13 @@ export class GameComponent implements OnInit {
         classString += " white";
       }
     }
-    if (this.isHighlighted(row, col)) {
+    if (this.shouldBeHighlighted(new Location(row, col))) {
       classString += " highlighted";
     }
     return classString;
   }
 
-  private isHighlighted(row: number, col: string): boolean {
-    const location = new Location(row, col);
+  private shouldBeHighlighted(location: Location): boolean {
     let returnVal = false;
     if (this.selectedPiece != null && this.selectedPiece.isEqual(location)) {
       returnVal = true;
@@ -88,8 +87,7 @@ export class GameComponent implements OnInit {
   }
 
   getInLocation(row: number, col: string): string {
-    // return this.gameState.inLocation(new Location(row, col));
-    return this.gameState.inLocation(row, col);
+    return this.gameState.inLocation(new Location(row, col));
   }
 
   onClickSquare(row: number, col: string) {

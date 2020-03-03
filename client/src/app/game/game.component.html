@@ -7,7 +7,7 @@
     style="margin: auto;"
     *ngFor="let row of rowVals">
       <div class="col-md-1.5" *ngFor="let col of colVals">
-        <div class="{{getSquareColor(row, col)}}"
+        <div class="{{getSquareBackground(row, col)}}"
           (click)="onClickSquare(row, col)"
           [innerHTML]="getInLocation(row, col)">
         </div>
