@@ -88,12 +88,22 @@ export class GameComponent implements OnInit {
     if (this.selectedPiece == null) {
       // Then we have yet to select a piece
 
+      if (this.gameState.isEmpty(clickedLocation)) {
+        // FIXME: Also check if piece is correct color clientside?
+        return;
+      }
+
       this.selectedPiece = clickedLocation;
       // FIXME: Make request here
-      this.selectedPieceMoves = [new Location(5, "a"), new Location(1, "h")];
+      // FIXME: Also handle if click blank space/not their piece
+      this.selectedPieceMoves = [new Location(3, "f"), new Location(3, "h")];
     } else {
       // Piece has already been selected - if in selected piece array make move
       this.selectedPieceMoves.forEach(potentialMove => {
+        if (clickedLocation.isEqual(this.selectedPiece)) {
+          // If user just clicks back on selected piece just
+          return;
+        }
         if (clickedLocation.isEqual(potentialMove)) {
           this.moveSelectedPiece(clickedLocation);
         }
