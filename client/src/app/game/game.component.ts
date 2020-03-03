@@ -44,7 +44,7 @@ export class GameComponent implements OnInit {
       [blank, blank, blank, blank, blank, blank, blank, blank],
       [blank, blank, blank, blank, blank, blank, blank, blank],
       ["&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;"],
-      ["&#9814;", "&#9816;", "&#9815;", "&#9812;", "&#9813;", "&#9815;", "&#9816;", "&#9814;"]
+      ["&#9814;", "&#9816;", "&#9815;", "&#9813;", "&#9812;", "&#9815;", "&#9816;", "&#9814;"]
     ]);
     this.selectedPiece = null;
     this.selectedPieceMoves = [];
