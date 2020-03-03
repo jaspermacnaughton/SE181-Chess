@@ -5,12 +5,12 @@
   <div
     class="row"
     style="margin: auto;"
-    *ngFor="let row of [8, 7, 6, 5, 4, 3, 2, 1]">
-      <div class="col-md-1.5" *ngFor="let col of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']">
+    *ngFor="let row of rowVals">
+      <div class="col-md-1.5" *ngFor="let col of colVals">
         <div class="{{getSquareColor(row, col)}}"
           (click)="onClickSquare(row, col)"
           [innerHTML]="getInLocation(row, col)">
-        </div><!--  {{row + " " + col}}-->
+        </div>
       </div>
   </div>
 </div>

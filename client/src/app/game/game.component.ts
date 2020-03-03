@@ -10,6 +10,8 @@ import { Location } from './models/Location.model';
 })
 export class GameComponent implements OnInit {
   color: string;
+  rowVals: number[];
+  colVals: string[];
   isTurn: boolean;
   blank = "&#160"; // If use empty string div doesn't render
   gameState: GameState;
@@ -21,7 +23,19 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     const blank = this.blank;
     this.color = this.requestService.getAssignedColor();
-    this.isTurn = this.color === "white";
+    if (this.color == null) {
+      console.log("DEV: No Color selected: Defaulting to white");
+      this.color = "white";
+    }
+    this.rowVals = [8, 7, 6, 5, 4, 3, 2, 1];
+    this.colVals = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    if (this.color === "white") {
+      this.isTurn = true;
+    } else {
+      this.isTurn = false;
+      this.rowVals = this.rowVals.reverse();
+      this.colVals = this.colVals.reverse();
+    }
     this.gameState = new GameState([
       ["&#9820;", "&#9822;", "&#9821;", "&#9819;", "&#9818;", "&#9821;", "&#9822;", "&#9820;"],
       ["&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;"],
