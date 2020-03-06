@@ -6,7 +6,7 @@ const MoveStatus = {
   WHITE_WIN: 'WhiteWin',
   STALE_MATE: 'StaleMate',
   PROMOTION_REQUIRED: 'PromotionRequired'
-}
+};
 const Players = {
   WHITE: {
     COLOR: 0,
@@ -26,13 +26,13 @@ const Players = {
     QUEEN: '&#9819;',
     KING: '&#9818;'
   }
-}
+};
 const Direction = {
   RIGHT: [0, 1],
   LEFT: [0, -1],
   UP: [1, 0],
-  DOWN: [-1, 0],
-}
+  DOWN: [-1, 0]
+};
 class Location {
 
   constructor(row, col) {
@@ -50,12 +50,17 @@ class Location {
   }
 
   get_human_readable() {
-    return '';
+    var col_char = String.fromCharCode(this.col + 64);
+    return col_char + this.row.toString();
   }
 
   get_new_loc(directions) {
+    if (directions[0].length === undefined) {
+      directions = [directions];
+    }
     var new_row = this.row;
     var new_col = this.col;
+
     for (var index = 0; index < directions.length; index++) {
       new_row = new_row + directions[index][0];
       new_col = new_col + directions[index][1];
@@ -73,6 +78,7 @@ class GameState {
   }
 
   restart() {
+    //TO DO
     return null;
   }
 
@@ -81,14 +87,16 @@ class GameState {
   }
 
   get_curr_board() {
-    return this.board
+    return this.board;
   }
 
   game_over() {
+    //TO DO
     return null;
   }
 
   play_move(start, end, promotion) {
+    //TO DO
     return null;
   }
 
@@ -105,10 +113,10 @@ class GameState {
 
   get_empty_loc_along_dir(curr_loc, dir) {
     var empty_locations = [];
-    var loc = curr_loc.get_new_loc([dir]);
+    var loc = curr_loc.get_new_loc(dir);
     while (this.get_piece_on_board(loc) === null) {
       empty_locations.push(loc);
-      loc = loc.get_new_loc([dir]);
+      loc = loc.get_new_loc(dir);
     }
     return empty_locations;
   }
@@ -131,17 +139,20 @@ class GameState {
 }
 class Piece {
 
-  constructor(color, loc) {
+
+  constructor(color, loc, display) {
     this.color = color;
     this.loc = loc;
+    this.display = display;
   }
 
 
   get_moves(gs) {
-    return null;
+    throw new Error('Abstract Method');
   }
 
   valid_move(loc) {
+    //TO DO
     return null;
   }
 
@@ -159,7 +170,7 @@ class Piece {
 
   can_capture(gs, capture_loc) {
     var capture_piece = gs.get_piece_on_board(capture_loc);
-    if (capture_piece instanceof Piece && capture_piece.get_color() != this.get_color()) {
+    if (capture_piece instanceof Piece && capture_piece.get_color() !== this.get_color()) {
       return true;
     }
     return false;
@@ -169,50 +180,49 @@ class Piece {
 class Pawn extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.PAWN;
-      this.start_row = 7;
-      this.forward_move = Direction.DOWN;
-    } else {
-      this.display = Players.WHITE.PAWN;
-      this.start_row = 2;
-      this.forward_move = Direction.UP;
+    var display = Players.WHITE.PAWN;
+    var forward_move = Direction.UP;
+    var start_row = 2;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.PAWN;
+      start_row = 7;
+      forward_move = Direction.DOWN;
     }
+    super(color, loc, display);
+    this.start_row = start_row;
+    this.forward_move = forward_move;
   }
 
   get_moves(gs) {
     var locations = [];
     var capture_dirs = [Direction.LEFT, Direction.RIGHT];
     var curr_loc = super.get_curr_loc();
-    var forward = curr_loc.get_new_loc([this.forward_move]);
-    if (gs.get_piece_on_board(forward) == null) {
+    var forward = curr_loc.get_new_loc(this.forward_move);
+    if (gs.get_piece_on_board(forward) === null) {
       locations.push(forward);
-      forward = forward.get_new_loc([this.forward_move]);
-      if (curr_loc.get()[0] == this.start_row && gs.get_piece_on_board(forward) == null) {
+      forward = forward.get_new_loc(this.forward_move);
+      if (curr_loc.get()[0] === this.start_row && gs.get_piece_on_board(forward) == null) {
         locations.push(forward);
       }
     }
     for (var index = 0; index < capture_dirs.length; index++) {
-
       var capture_loc = curr_loc.get_new_loc([this.forward_move, capture_dirs[index]]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
       }
     }
-    return locations
+    return locations;
 
   }
 }
 class Rook extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.ROOK;
-    } else {
-      this.display = Players.WHITE.ROOK;
+    var display = Players.WHITE.ROOK;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.ROOK;
     }
+    super(color, loc, display);
   }
 
   get_moves(gs) {
@@ -220,7 +230,7 @@ class Rook extends Piece {
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
-      var capture_loc = locations[locations.length - 1].get_new_loc([possible_dirs[index]]);
+      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
       }
@@ -232,61 +242,93 @@ class Rook extends Piece {
 class Bishop extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.BISHOP;
-    } else {
-      this.display = Players.WHITE.BISHOP;
+    var display = Players.WHITE.BISHOP;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.BISHOP;
     }
+    super(color, loc, display);
   }
 
   get_moves(gs) {
-    return null;
+    var possible_dirs = [[Direction.UP, Direction.LEFT], [Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.LEFT], [Direction.DOWN, Direction.RIGHT]];
+    var locations = [];
+    for (var index = 0; index < possible_dirs.length; index++) {
+      locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
+      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
+      if (super.can_capture(gs, capture_loc)) {
+        locations.push(capture_loc);
+      }
+    }
+    return locations;
   }
 }
 class Knight extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.KNIGHT;
-    } else {
-      this.display = Players.WHITE.KNIGHT;
+    var display = Players.WHITE.KNIGHT;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.KNIGHT;
     }
+    super(color, loc, display);
   }
 
   get_moves(gs) {
-    return null;
+    var possible_dirs = [[Direction.UP, Direction.UP, Direction.LEFT],
+    [Direction.UP, Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.DOWN, Direction.LEFT],
+    [Direction.DOWN, Direction.RIGHT, Direction.RIGHT]];
+    var locations = [];
+    for (var index = 0; index < possible_dirs.length; index++) {
+      var next_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
+      if (gs.get_piece_on_board(next_loc) === null || super.can_capture(gs, next_loc)) {
+        locations.push(next_loc);
+      }
+    }
+    return locations;
   }
 }
 class Queen extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.QUEEN;
-    } else {
-      this.display = Players.WHITE.QUEEN;
+    var display = Players.WHITE.QUEEN;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.QUEEN;
     }
+    super(color, loc, display);
   }
 
   get_moves(gs) {
-    return null;
+    var possible_dirs = Object.values(Direction).concat([[Direction.UP, Direction.LEFT], [Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.LEFT], [Direction.DOWN, Direction.RIGHT]]);
+    var locations = [];
+    for (var index = 0; index < possible_dirs.length; index++) {
+      locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
+      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
+      if (super.can_capture(gs, capture_loc)) {
+        locations.push(capture_loc);
+      }
+    }
+    return locations;
   }
 }
 class King extends Piece {
 
   constructor(color, loc) {
-    super(color, loc);
-    if (color == Players.BLACK.COLOR) {
-      this.display = Players.BLACK.KING;
-    } else {
-      this.display = Players.WHITE.KING;
+    var display = display = Players.WHITE.KING;
+    if (color === Players.BLACK.COLOR) {
+      display = Players.BLACK.KING;
     }
+    super(color, loc, display);
   }
 
   get_moves(gs) {
-    return null;
+    var possible_dirs = Object.values(Direction);
+    var locations = [];
+    for (var index = 0; index < possible_dirs.length; index++) {
+      var next_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
+      if (gs.get_piece_on_board(next_loc) === null || super.can_capture(gs, next_loc)){
+        locations.push(next_loc);
+      } 
+    }
+    return locations;
   }
 }
 
