@@ -78,8 +78,9 @@ class GameState {
   }
 
   restart() {
-    //TO DO
-    return null;
+    this.board = this.constructor.default_board();
+    this.current_player = Players.BLACK.COLOR;
+    return MoveStatus.SUCCESS;
   }
 
   get_curr_player() {
@@ -90,14 +91,59 @@ class GameState {
     return this.board;
   }
 
+  // Just check if there are any valid moves for a player?
+  // If none then check if current player is in check then they lost
+  // Else it's a stalemate?
   game_over() {
-    //TO DO
-    return null;
+    var row, col;
+    var attacked_positions;
+    var current_player_king;
+    var has_valid_moves = false;
+    for(row = 0; row < this.board.length; row++){
+        for(col = 0; col < this.board[0].length; col++){
+            var piece = this.board[row][col];
+            if(piece == null){
+                continue;
+            }
+
+            if(piece.get_color() == this.current_player){
+                if(piece instanceof King){
+                    current_player_king = new Location(row, col);
+                }
+                if(piece.get_moves(this).length != 0){
+                    //TODO something
+                    has_valid_moves = true;
+                }
+            }else{
+                attacked_positions.concat(piece.get_moves(this));
+            }
+        }
+    }
+    if(!has_valid_moves && attacked_positions.indexOf(current_player_king) != -1){
+        // Checkmate
+        if(this.current_player == Player.WHITE.COLOR){
+            return MoveStatus.BLACK_WIN;
+        }else{
+            return MoveStatus.WHITE_WIN;
+        }
+    }
+    return MoveStatus.SUCCESS;
   }
 
+  //TODO: add promotion logic
+  //      check for check
   play_move(start, end, promotion) {
-    //TO DO
-    return null;
+    var piece = this.get_piece_on_board(start);
+    var valid_moves = piece.get_moves(this);
+    if(end.indexOf(end) != -1){
+        this.swap_locations(start, end);
+        piece.set_location(end);
+        // 1 goes to 0 and 0 goes to 1 which are the color representations
+        this.current_player = !this.current_player;
+        return MoveStatus.SUCCESS
+    }
+
+    return MoveStatus.INVALID;
   }
 
   get_piece_on_board(loc) {
@@ -119,6 +165,12 @@ class GameState {
       loc = loc.get_new_loc(dir);
     }
     return empty_locations;
+  }
+
+  swap_locations(loc1, loc2){
+    var tmp = this.board[loc1.row][loc1.col]
+    this.board[loc1.row][loc1.col] = this.board[loc2.row][loc2.col];
+    this.board[loc2.row][loc2.col] = tmp;
   }
 
   static default_board(){
@@ -166,6 +218,10 @@ class Piece {
 
   get_color() {
     return this.color;
+  }
+
+  set_location(loc){
+    this.loc = loc;
   }
 
   can_capture(gs, capture_loc) {
@@ -326,7 +382,7 @@ class King extends Piece {
       var next_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
       if (gs.get_piece_on_board(next_loc) === null || super.can_capture(gs, next_loc)){
         locations.push(next_loc);
-      } 
+      }
     }
     return locations;
   }

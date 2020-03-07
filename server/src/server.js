@@ -51,7 +51,7 @@ app.get('/send_move', (req,res) => {
         res.end();
         return;
     }
-    
+
     var start_loc = req.body.start;
     var end_loc = req.body.end;
     var promotion = req.body.promotion;
