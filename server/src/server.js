@@ -16,7 +16,7 @@ var game = new chess.GameState(chess.GameState.default_board(), player_ips, ches
 
 // Returns index of player in player_ips or -1 if it doesn't exist
 function get_player_id(ip){
-    return player_ips.indexOf(id);
+    return player_ips.indexOf(ip);
 }
 
 function valid_player(id){
@@ -132,7 +132,7 @@ app.get('/get_moves', (req,res) => {
         return;
     }
 
-    var piece = game.get_piece_on_board(new chess.Location(loc.row, loc.col));
+    var piece = game.get_piece_on_board(new chess.Location(piece_loc.row, piece_loc.col));
     var moves = piece.get_moves(game);
 
     res.json({
@@ -212,10 +212,10 @@ app.get('/resign', (req,res) => {
         res.json({
             "status" : chess.MoveStatus.WHITE_WIN
         });
-    };
+    }
 });
 
 app.listen(port, () => {
-    console.log("Server started, listening on port " + port)
+    console.log("Server started, listening on port " + port);
 });
 
