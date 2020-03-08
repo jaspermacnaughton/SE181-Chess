@@ -109,7 +109,7 @@ export class GameComponent implements OnInit {
       this.requestService.getMoves(clickedLocation).subscribe(res => {
         console.log(res.moves);
         res.moves.forEach(move => {
-          let moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
+          const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
           this.selectedPieceMoves.push(moveObject);
         });
       });
