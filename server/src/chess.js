@@ -451,5 +451,11 @@ module.exports = {
   GameState: GameState,
   Players: Players,
   MoveStatus: MoveStatus,
-  Location: Location
+  Location: Location,
+  Pawn: Pawn,
+  King: King,
+  Bishop: Bishop,
+  Rook: Rook,
+  Queen: Queen,
+  Knight: Knight
 };
