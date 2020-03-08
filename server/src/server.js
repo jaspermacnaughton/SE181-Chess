@@ -15,7 +15,7 @@ var winner = null;
 var game = new chess.GameState(chess.GameState.default_board(), player_ips, chess.Players.WHITE.COLOR);
 
 // Returns index of player in player_ips or -1 if it doesn't exist
-function get_player_id(ip){
+function get_player_id(id){
     return player_ips.indexOf(id);
 }
 
@@ -41,7 +41,7 @@ app.get('/', (req,res) => {
     res.end();
 });
 
-app.get('/send_move', (req,res) => {
+app.get('/api/send_move', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -93,7 +93,7 @@ app.get('/send_move', (req,res) => {
 
 });
 
-app.get('/sync', (req,res) => {
+app.get('/api/sync', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -111,7 +111,7 @@ app.get('/sync', (req,res) => {
     });
 });
 
-app.get('/get_moves', (req,res) => {
+app.get('/api/get_moves', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -142,7 +142,7 @@ app.get('/get_moves', (req,res) => {
 
 });
 
-app.get('/restart', (req,res) => {
+app.get('/api/restart', (req,res) => {
     game = new chess.GameState(chess.GameState.default_board(), player_ips, chess.Players.WHITE.COLOR);
     inGame = true;
     res.json({"status" : chess.MoveStatus.SUCCESS});
@@ -150,7 +150,7 @@ app.get('/restart', (req,res) => {
 });
 
 // This is questionable if a color request is sent midgame or something....
-app.get('/color', (req,res) => {
+app.get('/api/color', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -190,7 +190,7 @@ app.get('/color', (req,res) => {
     });
 });
 
-app.get('/resign', (req,res) => {
+app.get('/api/resign', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
