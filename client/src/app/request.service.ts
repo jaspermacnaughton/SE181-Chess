@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MoveStatus } from './game/models/MoveStatus.model';
 import { Location } from './game/models/Location.model';
+import { Observable } from 'rxjs';
 
 export interface ColorResponse {
   color: string;
@@ -29,23 +30,13 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    console.log("numeric row = " + (8 - location.row));
-    console.log("col = " + (location.col.charCodeAt(0) - 97));
-    this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
+    // console.log("numeric row = " + (8 - location.row));
+    // console.log("col = " + (location.col.charCodeAt(0) - 97));
+    return this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
       piece: {
         row: 8 - location.row,
         col: location.col.charCodeAt(0) - 97
       }
-    }).subscribe(res => {
-      console.log(res.moves);
-      const moves = [];
-      res.moves.forEach(move => {
-        let moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
-        console.log(moveObject.toString());
-        moves.push(moveObject);
-      });
-      console.log(moves);
-      return moves;
     });
   }
 

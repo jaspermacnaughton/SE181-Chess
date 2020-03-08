@@ -106,13 +106,18 @@ export class GameComponent implements OnInit {
       }
 
       this.selectedPiece = clickedLocation;
-      this.requestService.getMoves(clickedLocation);
-      // FIXME: Also handle if click blank space/not their piece
+      this.requestService.getMoves(clickedLocation).subscribe(res => {
+        console.log(res.moves);
+        res.moves.forEach(move => {
+          let moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
+          this.selectedPieceMoves.push(moveObject);
+        });
+      });
     } else {
       // Piece has already been selected - if in selected piece array make move
       this.selectedPieceMoves.forEach(potentialMove => {
         if (clickedLocation.isEqual(this.selectedPiece)) {
-          // If user just clicks back on selected piece just
+          // If user just clicks back on selected piece just unselect all
           return;
         }
         if (clickedLocation.isEqual(potentialMove)) {
@@ -126,7 +131,6 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.gameState.move(this.selectedPiece, location);
-
   }
 
   onRestart() {
