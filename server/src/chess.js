@@ -51,7 +51,7 @@ class Location {
 
   get_human_readable() {
     var col_char = String.fromCharCode(this.col + 64);
-    return col_char + this.row.toString();
+    return col_char + (this.row+1).toString();
   }
 
   get_new_loc(directions) {
@@ -66,6 +66,14 @@ class Location {
       new_col = new_col + directions[index][1];
     }
     return new Location(new_row, new_col);
+  }
+  
+  isEqual(loc){
+      var [row2, col2] = loc.get();
+      if (this.row === row2 && this.col === col2){
+          return true;
+      }
+      return false;
   }
 
 }
@@ -102,15 +110,15 @@ class GameState {
     for(row = 0; row < this.board.length; row++){
         for(col = 0; col < this.board[0].length; col++){
             var piece = this.board[row][col];
-            if(piece == null){
+            if(piece === null){
                 continue;
             }
 
-            if(piece.get_color() == this.current_player){
+            if(piece.get_color() === this.current_player){
                 if(piece instanceof King){
                     current_player_king = new Location(row, col);
                 }
-                if(piece.get_moves(this).length != 0){
+                if(piece.get_moves(this).length !== 0){
                     //TODO something
                     has_valid_moves = true;
                 }
@@ -119,9 +127,9 @@ class GameState {
             }
         }
     }
-    if(!has_valid_moves && attacked_positions.indexOf(current_player_king) != -1){
+    if(!has_valid_moves && attacked_positions.indexOf(current_player_king) !== -1){
         // Checkmate
-        if(this.current_player == Player.WHITE.COLOR){
+        if(this.current_player === Players.WHITE.COLOR){
             return MoveStatus.BLACK_WIN;
         }else{
             return MoveStatus.WHITE_WIN;
@@ -135,12 +143,12 @@ class GameState {
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
     var valid_moves = piece.get_moves(this);
-    if(end.indexOf(end) != -1){
+    if(end.indexOf(end) !== -1){
         this.swap_locations(start, end);
         piece.set_location(end);
         // 1 goes to 0 and 0 goes to 1 which are the color representations
         this.current_player = !this.current_player;
-        return MoveStatus.SUCCESS
+        return MoveStatus.SUCCESS;
     }
 
     return MoveStatus.INVALID;
@@ -168,7 +176,7 @@ class GameState {
   }
 
   swap_locations(loc1, loc2){
-    var tmp = this.board[loc1.row][loc1.col]
+    var tmp = this.board[loc1.row][loc1.col];
     this.board[loc1.row][loc1.col] = this.board[loc2.row][loc2.col];
     this.board[loc2.row][loc2.col] = tmp;
   }
@@ -184,7 +192,7 @@ class GameState {
     [null,null,null,null,null,null,null,null],
     [null,null,null,null,null,null,null,null],
     [new Pawn(white,(0,6)), new Pawn(white,(1,6))  , new Pawn(white,(2,6))  , new Pawn(white,(3,6)) , new Pawn(white,(4,6)), new Pawn(white,(5,6))  , new Pawn(white,(6,6))  , new Pawn(white,(7,6))],
-    [new Rook(white,(0,7)), new Knight(white,(1,7)), new Bishop(white,(2,7)), new Queen(white,(3,7)), new King(white,(4,7)), new Bishop(white,(5,7)), new Knight(white,(6,7)), new Rook(white,(7,7))],
+    [new Rook(white,(0,7)), new Knight(white,(1,7)), new Bishop(white,(2,7)), new Queen(white,(3,7)), new King(white,(4,7)), new Bishop(white,(5,7)), new Knight(white,(6,7)), new Rook(white,(7,7))]
     ];
   }
 
@@ -203,9 +211,14 @@ class Piece {
     throw new Error('Abstract Method');
   }
 
-  valid_move(loc) {
-    //TO DO
-    return null;
+  valid_move(gs, loc) {
+    var valid_moves = this.get_moves(gs);
+    for (var index = 0; index < valid_moves.length; index++) {
+        if (loc.isEqual(valid_moves[index])){
+            return true;
+        }
+    }
+    return false;
   }
 
   get_curr_loc() {
@@ -248,6 +261,10 @@ class Pawn extends Piece {
     this.start_row = start_row;
     this.forward_move = forward_move;
   }
+  
+  get_starting_loc(){
+      return this.start_row; 
+  }
 
   get_moves(gs) {
     var locations = [];
@@ -257,7 +274,7 @@ class Pawn extends Piece {
     if (gs.get_piece_on_board(forward) === null) {
       locations.push(forward);
       forward = forward.get_new_loc(this.forward_move);
-      if (curr_loc.get()[0] === this.start_row && gs.get_piece_on_board(forward) == null) {
+      if (curr_loc.get()[0] === this.start_row && gs.get_piece_on_board(forward) === null) {
         locations.push(forward);
       }
     }
@@ -393,4 +410,4 @@ module.exports = {
     Players : Players,
     MoveStatus : MoveStatus,
     Location : Location
-}
+};
