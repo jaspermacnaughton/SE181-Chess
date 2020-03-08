@@ -29,7 +29,7 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    return this.http.post("/api/get_moves", {piece:
+    return this.http.post<{status: MoveStatus, moves: Location[]}>("/api/get_moves", {piece:
       {
         row: 8 - location.row,
         col: location.col.charCodeAt(0) - 97}

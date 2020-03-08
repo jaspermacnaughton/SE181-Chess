@@ -123,7 +123,6 @@ app.post('/api/get_moves', (req,res) => {
         return;
     }
 
-    console.log(game);
     var piece = game.get_piece_on_board(new chess.Location(piece_loc.row, piece_loc.col));
     var moves = piece.get_moves(game);
 
