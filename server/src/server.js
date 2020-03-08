@@ -18,13 +18,8 @@ var winner = null;
 var game = new chess.GameState(chess.GameState.default_board(), player_ips, chess.Players.WHITE.COLOR);
 
 // Returns index of player in player_ips or -1 if it doesn't exist
-<<<<<<< HEAD
 function get_player_id(id){
     return player_ips.indexOf(id);
-=======
-function get_player_id(ip){
-    return player_ips.indexOf(ip);
->>>>>>> bf00e2f3720f1542dad3fe6c1e0b702d63bc463b
 }
 
 function valid_player(id){
