@@ -27,19 +27,7 @@ function valid_player(id){
 }
 
 app.get('/', (req,res) => {
-    // Check if it's a new connection, if it is then add them
-    // to the player_ips list if there are not already 2 players
-    var player = get_player_id(req.connection.remoteAddress);
-    if(player == -1){
-        if(player_ips.length < 2){
-            player_ips.push(req.connection.remoteAddress);
-        }else{
-            res.write("Already have two players");
-            res.end();
-            return;
-        }
-    }
-    // Send all client stuff here
+    // Dummy while in dev because of proxy
     res.write("<h1>Chess server</h1>");
     res.end();
 });
@@ -115,7 +103,6 @@ app.post('/api/sync', (req,res) => {
 });
 
 app.post('/api/get_moves', (req,res) => {
-// app.get('/api/get_moves', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -136,6 +123,7 @@ app.post('/api/get_moves', (req,res) => {
         return;
     }
 
+    console.log(game);
     var piece = game.get_piece_on_board(new chess.Location(piece_loc.row, piece_loc.col));
     var moves = piece.get_moves(game);
 

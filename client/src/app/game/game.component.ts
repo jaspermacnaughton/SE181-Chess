@@ -106,6 +106,7 @@ export class GameComponent implements OnInit {
       }
 
       this.selectedPiece = clickedLocation;
+      console.log(clickedLocation);
       // FIXME: Make request here
       this.requestService.getMoves(clickedLocation).subscribe(res => {
         console.log(res);

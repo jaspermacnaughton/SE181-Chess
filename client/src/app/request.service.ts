@@ -18,9 +18,7 @@ export class RequestService {
   constructor(private http: HttpClient, private router: Router) { }
 
   requestColor(requestedColor: string) {
-    this.http.get<ColorResponse>("/api/color").subscribe(response => {
-      console.log("Got colorResponse");
-      console.log(response);
+    this.http.post<ColorResponse>("/api/color", {color: requestedColor}).subscribe(response => {
       this.assignedColor = response.color;
       this.router.navigateByUrl("/play");
     });
@@ -31,11 +29,14 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    return this.http.get("/api/get_moves");
+    return this.http.post("/api/get_moves", {piece:
+      {
+        row: 8 - location.row,
+        col: location.col.charCodeAt(0) - 97}
+      });
   }
 
-  sendMove(start: Location, end: Location): MoveStatus {
-    this.http.post("/send_move", { start, end });
-    return MoveStatus.Success;
+  sendMove(start: Location, end: Location) {
+    return this.http.post("/send_move", { start, end });
   }
 }
