@@ -6,6 +6,9 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 const port = 8080;
 
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'dist')));
+
 var chess = require(__dirname + '/chess.js');
 
 var player_ips = [];
@@ -152,13 +155,14 @@ app.get('/api/restart', (req,res) => {
 // This is questionable if a color request is sent midgame or something....
 app.get('/api/color', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
-    if(!valid_player(player)){
-        res.json({
-            "status" : chess.MoveStatus.INVALID,
-            "msg" : "Not currently a valid player"
-        });
-        res.end();
-        return;
+    if(player == -1){
+        if(player_ips.length < 2){
+            player_ips.push(req.connection.remoteAddress);
+        }else{
+            res.write("Already have two players");
+            res.end();
+            return;
+        }
     }
 
     var color;
