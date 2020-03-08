@@ -142,7 +142,6 @@ class GameState {
   //      check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
-    var valid_moves = piece.get_moves(this);
     if (end.indexOf(end) !== -1) {
       if (piece instanceof Pawn && (piece.get_end_row() === end.get()[0])) {
         return MoveStatus.PROMOTION_REQUIRED;
@@ -180,14 +179,14 @@ class GameState {
         new_piece = new Queen(piece.get_color(), loc);
         break;
     }
-    return set_piece_on_board(new_piece, loc);
-  };
-  
+    return this.set_piece_on_board(new_piece, loc);
+  }
+
   set_piece_on_board(piece, loc) {
     var [row, col] = loc.get();
     if (row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1)) {
       return false;
-    } 
+    }
     this.board[row][col] = piece;
     return true;
   }
@@ -243,6 +242,7 @@ class Piece {
 
 
   get_moves(gs) {
+    /*jshint unused:false*/
     throw new Error('Abstract Method');
   }
 
@@ -427,7 +427,7 @@ class Queen extends Piece {
 class King extends Piece {
 
   constructor(color, loc) {
-    var display = display = Players.WHITE.KING;
+    var display = Players.WHITE.KING;
     if (color === Players.BLACK.COLOR) {
       display = Players.BLACK.KING;
     }
