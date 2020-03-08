@@ -51,7 +51,7 @@ class Location {
 
   get_human_readable() {
     var col_char = String.fromCharCode(this.col + 64);
-    return col_char + (this.row+1).toString();
+    return col_char + (this.row + 1).toString();
   }
 
   get_new_loc(directions) {
@@ -67,13 +67,13 @@ class Location {
     }
     return new Location(new_row, new_col);
   }
-  
-  isEqual(loc){
-      var [row2, col2] = loc.get();
-      if (this.row === row2 && this.col === col2){
-          return true;
-      }
-      return false;
+
+  isEqual(loc) {
+    var [row2, col2] = loc.get();
+    if (this.row === row2 && this.col === col2) {
+      return true;
+    }
+    return false;
   }
 
 }
@@ -107,33 +107,33 @@ class GameState {
     var attacked_positions;
     var current_player_king;
     var has_valid_moves = false;
-    for(row = 0; row < this.board.length; row++){
-        for(col = 0; col < this.board[0].length; col++){
-            var piece = this.board[row][col];
-            if(piece === null){
-                continue;
-            }
+    for (row = 0; row < this.board.length; row++) {
+      for (col = 0; col < this.board[0].length; col++) {
+        var piece = this.board[row][col];
+        if (piece === null) {
+          continue;
+        }
 
-            if(piece.get_color() === this.current_player){
-                if(piece instanceof King){
-                    current_player_king = new Location(row, col);
-                }
-                if(piece.get_moves(this).length !== 0){
-                    //TODO something
-                    has_valid_moves = true;
-                }
-            }else{
-                attacked_positions.concat(piece.get_moves(this));
-            }
+        if (piece.get_color() === this.current_player) {
+          if (piece instanceof King) {
+            current_player_king = new Location(row, col);
+          }
+          if (piece.get_moves(this).length !== 0) {
+            //TODO something
+            has_valid_moves = true;
+          }
+        } else {
+          attacked_positions.concat(piece.get_moves(this));
         }
+      }
     }
-    if(!has_valid_moves && attacked_positions.indexOf(current_player_king) !== -1){
-        // Checkmate
-        if(this.current_player === Players.WHITE.COLOR){
-            return MoveStatus.BLACK_WIN;
-        }else{
-            return MoveStatus.WHITE_WIN;
-        }
+    if (!has_valid_moves && attacked_positions.indexOf(current_player_king) !== -1) {
+      // Checkmate
+      if (this.current_player === Players.WHITE.COLOR) {
+        return MoveStatus.BLACK_WIN;
+      } else {
+        return MoveStatus.WHITE_WIN;
+      }
     }
     return MoveStatus.SUCCESS;
   }
@@ -143,26 +143,61 @@ class GameState {
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
     var valid_moves = piece.get_moves(this);
-    if(end.indexOf(end) !== -1){
-        this.swap_locations(start, end);
-        piece.set_location(end);
-        // 1 goes to 0 and 0 goes to 1 which are the color representations
-        this.current_player = !this.current_player;
-        return MoveStatus.SUCCESS;
+    if (end.indexOf(end) !== -1) {
+      if (piece instanceof Pawn && (piece.get_end_row() === end.get()[0])) {
+        return MoveStatus.PROMOTION_REQUIRED;
+      }
+      this.swap_locations(start, end);
+      piece.set_location(end);
+      if (promotion !== null) {
+        var success = this.promote_piece(promotion, end);
+        if (!success){
+            return MoveStatus.INVALID;
+        }
+      }
+      this.current_player = !this.current_player;
+      // 1 goes to 0 and 0 goes to 1 which are the color representations
+      return MoveStatus.SUCCESS;
     }
 
     return MoveStatus.INVALID;
   }
 
+  promote_piece(promotion, loc) {
+    var piece = this.get_piece_on_board(loc);
+    var new_piece = null;
+    switch (promotion) {
+      case 'Knight':
+        new_piece = new Knight(piece.get_color(), loc);
+        break;
+      case 'Rook':
+        new_piece = new Rook(piece.get_color(), loc);
+        break;
+      case 'Bishop':
+        new_piece = new Bishop(piece.get_color(), loc);
+        break;
+      case 'Queen':
+        new_piece = new Queen(piece.get_color(), loc);
+        break;
+    }
+    return set_piece_on_board(new_piece, loc);
+  };
+  
+  set_piece_on_board(piece, loc) {
+    var [row, col] = loc.get();
+    if (row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1)) {
+      return false;
+    } 
+    this.board[row][col] = piece;
+    return true;
+  }
+
   get_piece_on_board(loc) {
     var [row, col] = loc.get();
-    row = row - 1;
-    col = col - 1;
     if (row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1)) {
       return undefined;
-    } else {
-      return this.board[row][col];
-    }
+    } 
+    return this.board[row][col]; 
   }
 
   get_empty_loc_along_dir(curr_loc, dir) {
@@ -175,24 +210,24 @@ class GameState {
     return empty_locations;
   }
 
-  swap_locations(loc1, loc2){
+  swap_locations(loc1, loc2) {
     var tmp = this.board[loc1.row][loc1.col];
     this.board[loc1.row][loc1.col] = this.board[loc2.row][loc2.col];
     this.board[loc2.row][loc2.col] = tmp;
   }
 
-  static default_board(){
+  static default_board() {
     var black = Players.BLACK.COLOR;
     var white = Players.BLACK.COLOR;
     return [
-    [new Rook(black,(0,0)), new Knight(black,(1,0)), new Bishop(black,(2,0)), new Queen(black,(3,0)), new King(black,(4,0)), new Bishop(black,(5,0)), new Knight(black,(6,0)), new Rook(black,(7,0))],
-    [new Pawn(black,(0,1)), new Pawn(black,(1,1))  , new Pawn(black,(2,1))  , new Pawn(black,(3,1)) , new Pawn(black,(4,1)), new Pawn(black,(5,1))  , new Pawn(black,(6,1))  , new Pawn(black,(7,1))],
-    [null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null],
-    [null,null,null,null,null,null,null,null],
-    [new Pawn(white,(0,6)), new Pawn(white,(1,6))  , new Pawn(white,(2,6))  , new Pawn(white,(3,6)) , new Pawn(white,(4,6)), new Pawn(white,(5,6))  , new Pawn(white,(6,6))  , new Pawn(white,(7,6))],
-    [new Rook(white,(0,7)), new Knight(white,(1,7)), new Bishop(white,(2,7)), new Queen(white,(3,7)), new King(white,(4,7)), new Bishop(white,(5,7)), new Knight(white,(6,7)), new Rook(white,(7,7))]
+    [new Rook(black, (0, 0)), new Knight(black, (1, 0)), new Bishop(black, (2, 0)), new Queen(black, (3, 0)), new King(black, (4, 0)), new Bishop(black, (5, 0)), new Knight(black, (6, 0)), new Rook(black, (7, 0))],
+    [new Pawn(black, (0, 1)), new Pawn(black, (1, 1)), new Pawn(black, (2, 1)), new Pawn(black, (3, 1)), new Pawn(black, (4, 1)), new Pawn(black, (5, 1)), new Pawn(black, (6, 1)), new Pawn(black, (7, 1))],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [new Pawn(white, (0, 6)), new Pawn(white, (1, 6)), new Pawn(white, (2, 6)), new Pawn(white, (3, 6)), new Pawn(white, (4, 6)), new Pawn(white, (5, 6)), new Pawn(white, (6, 6)), new Pawn(white, (7, 6))],
+    [new Rook(white, (0, 7)), new Knight(white, (1, 7)), new Bishop(white, (2, 7)), new Queen(white, (3, 7)), new King(white, (4, 7)), new Bishop(white, (5, 7)), new Knight(white, (6, 7)), new Rook(white, (7, 7))]
     ];
   }
 
@@ -214,11 +249,15 @@ class Piece {
   valid_move(gs, loc) {
     var valid_moves = this.get_moves(gs);
     for (var index = 0; index < valid_moves.length; index++) {
-        if (loc.isEqual(valid_moves[index])){
-            return true;
-        }
+      if (loc.isEqual(valid_moves[index])) {
+        return true;
+      }
     }
     return false;
+  }
+
+  get_end_row() {
+    throw new Error('Not Implemented');
   }
 
   get_curr_loc() {
@@ -233,7 +272,7 @@ class Piece {
     return this.color;
   }
 
-  set_location(loc){
+  set_location(loc) {
     this.loc = loc;
   }
 
@@ -252,18 +291,21 @@ class Pawn extends Piece {
     var display = Players.WHITE.PAWN;
     var forward_move = Direction.UP;
     var start_row = 2;
+    var end_row = 7;
     if (color === Players.BLACK.COLOR) {
       display = Players.BLACK.PAWN;
+      end_row = 2;
       start_row = 7;
       forward_move = Direction.DOWN;
     }
     super(color, loc, display);
     this.start_row = start_row;
+    this.end_row = end_row;
     this.forward_move = forward_move;
   }
-  
-  get_starting_loc(){
-      return this.start_row; 
+
+  get_end_row() {
+    return this.end_row;
   }
 
   get_moves(gs) {
@@ -397,7 +439,7 @@ class King extends Piece {
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       var next_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
-      if (gs.get_piece_on_board(next_loc) === null || super.can_capture(gs, next_loc)){
+      if (gs.get_piece_on_board(next_loc) === null || super.can_capture(gs, next_loc)) {
         locations.push(next_loc);
       }
     }
@@ -406,8 +448,8 @@ class King extends Piece {
 }
 
 module.exports = {
-    GameState : GameState,
-    Players : Players,
-    MoveStatus : MoveStatus,
-    Location : Location
+  GameState: GameState,
+  Players: Players,
+  MoveStatus: MoveStatus,
+  Location: Location
 };
