@@ -87,7 +87,7 @@ class GameState {
 
   restart() {
     this.board = this.constructor.default_board();
-    this.current_player = Players.BLACK.COLOR;
+    this.current_player = Players.WHITE.COLOR;
     return MoveStatus.SUCCESS;
   }
 
