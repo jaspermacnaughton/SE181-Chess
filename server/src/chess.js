@@ -194,7 +194,7 @@ class GameState {
   get_piece_on_board(loc) {
     var [row, col] = loc.get();
     if (row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1)) {
-      return undefined;
+        return undefined;
     } 
     return this.board[row][col]; 
   }
@@ -219,14 +219,14 @@ class GameState {
     var black = Players.BLACK.COLOR;
     var white = Players.BLACK.COLOR;
     return [
-    [new Rook(black, (0, 0)), new Knight(black, (1, 0)), new Bishop(black, (2, 0)), new Queen(black, (3, 0)), new King(black, (4, 0)), new Bishop(black, (5, 0)), new Knight(black, (6, 0)), new Rook(black, (7, 0))],
-    [new Pawn(black, (0, 1)), new Pawn(black, (1, 1)), new Pawn(black, (2, 1)), new Pawn(black, (3, 1)), new Pawn(black, (4, 1)), new Pawn(black, (5, 1)), new Pawn(black, (6, 1)), new Pawn(black, (7, 1))],
+    [new Rook(black, new Location(0, 0)), new Knight(black, new Location(1, 0)), new Bishop(black, new Location(2, 0)), new Queen(black, new Location(3, 0)), new King(black, new Location(4, 0)), new Bishop(black, new Location(5, 0)), new Knight(black, new Location(6, 0)), new Rook(black, new Location(7, 0))],
+    [new Pawn(black, new Location(0, 1)), new Pawn(black, new Location(1, 1)), new Pawn(black, new Location(2, 1)), new Pawn(black, new Location(3, 1)), new Pawn(black, new Location(4, 1)), new Pawn(black, new Location(5, 1)), new Pawn(black, new Location(6, 1)), new Pawn(black, new Location(7, 1))],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
-    [new Pawn(white, (0, 6)), new Pawn(white, (1, 6)), new Pawn(white, (2, 6)), new Pawn(white, (3, 6)), new Pawn(white, (4, 6)), new Pawn(white, (5, 6)), new Pawn(white, (6, 6)), new Pawn(white, (7, 6))],
-    [new Rook(white, (0, 7)), new Knight(white, (1, 7)), new Bishop(white, (2, 7)), new Queen(white, (3, 7)), new King(white, (4, 7)), new Bishop(white, (5, 7)), new Knight(white, (6, 7)), new Rook(white, (7, 7))]
+    [new Pawn(white, new Location(0, 6)), new Pawn(white, new Location(1, 6)), new Pawn(white, new Location(2, 6)), new Pawn(white, new Location(3, 6)), new Pawn(white, new Location(4, 6)), new Pawn(white, new Location(5, 6)), new Pawn(white, new Location(6, 6)), new Pawn(white, new Location(7, 6))],
+    [new Rook(white, new Location(0, 7)), new Knight(white, new Location(1, 7)), new Bishop(white, new Location(2, 7)), new Queen(white, new Location(3, 7)), new King(white, new Location(4, 7)), new Bishop(white, new Location(5, 7)), new Knight(white, new Location(6, 7)), new Rook(white, new Location(7, 7))]
     ];
   }
 
