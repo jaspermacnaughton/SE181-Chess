@@ -44,7 +44,7 @@ app.get('/', (req,res) => {
     res.end();
 });
 
-app.get('/api/send_move', (req,res) => {
+app.post('/api/send_move', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -96,7 +96,7 @@ app.get('/api/send_move', (req,res) => {
 
 });
 
-app.get('/api/sync', (req,res) => {
+app.post('/api/sync', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -114,7 +114,8 @@ app.get('/api/sync', (req,res) => {
     });
 });
 
-app.get('/api/get_moves', (req,res) => {
+app.post('/api/get_moves', (req,res) => {
+// app.get('/api/get_moves', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
@@ -145,7 +146,7 @@ app.get('/api/get_moves', (req,res) => {
 
 });
 
-app.get('/api/restart', (req,res) => {
+app.post('/api/restart', (req,res) => {
     game = new chess.GameState(chess.GameState.default_board(), player_ips, chess.Players.WHITE.COLOR);
     inGame = true;
     res.json({"status" : chess.MoveStatus.SUCCESS});
@@ -153,7 +154,7 @@ app.get('/api/restart', (req,res) => {
 });
 
 // This is questionable if a color request is sent midgame or something....
-app.get('/api/color', (req,res) => {
+app.post('/api/color', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(player == -1){
         if(player_ips.length < 2){
@@ -194,7 +195,7 @@ app.get('/api/color', (req,res) => {
     });
 });
 
-app.get('/api/resign', (req,res) => {
+app.post('/api/resign', (req,res) => {
     var player = get_player_id(req.connection.remoteAddress);
     if(!valid_player(player)){
         res.json({
