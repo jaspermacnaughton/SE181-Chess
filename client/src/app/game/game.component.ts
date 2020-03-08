@@ -106,10 +106,7 @@ export class GameComponent implements OnInit {
       }
 
       this.selectedPiece = clickedLocation;
-      // FIXME: Make request here
-      this.requestService.getMoves(clickedLocation).subscribe(res => {
-        this.selectedPieceMoves = res.moves;
-      });
+      this.requestService.getMoves(clickedLocation);
       // FIXME: Also handle if click blank space/not their piece
     } else {
       // Piece has already been selected - if in selected piece array make move

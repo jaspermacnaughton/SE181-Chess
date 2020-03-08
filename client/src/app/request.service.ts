@@ -29,11 +29,24 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    return this.http.post<{status: MoveStatus, moves: Location[]}>("/api/get_moves", {piece:
-      {
+    console.log("numeric row = " + (8 - location.row));
+    console.log("col = " + (location.col.charCodeAt(0) - 97));
+    this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
+      piece: {
         row: 8 - location.row,
-        col: location.col.charCodeAt(0) - 97}
+        col: location.col.charCodeAt(0) - 97
+      }
+    }).subscribe(res => {
+      console.log(res.moves);
+      const moves = [];
+      res.moves.forEach(move => {
+        let moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
+        console.log(moveObject.toString());
+        moves.push(moveObject);
       });
+      console.log(moves);
+      return moves;
+    });
   }
 
   sendMove(start: Location, end: Location) {
