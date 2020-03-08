@@ -104,7 +104,7 @@ class GameState {
   // Else it's a stalemate?
   game_over() {
     var row, col;
-    var attacked_positions;
+    var attacked_positions = [];
     var current_player_king;
     var has_valid_moves = false;
     for (row = 0; row < this.board.length; row++) {
@@ -114,7 +114,7 @@ class GameState {
           continue;
         }
 
-        if (piece.get_color() === this.current_player) {
+        if (piece.get_color() === this.get_curr_player()) {
           if (piece instanceof King) {
             current_player_king = new Location(row, col);
           }
@@ -123,13 +123,13 @@ class GameState {
             has_valid_moves = true;
           }
         } else {
-          attacked_positions.concat(piece.get_moves(this));
+            attacked_positions = attacked_positions.concat(piece.get_moves(this));
         }
       }
     }
     if (!has_valid_moves && attacked_positions.indexOf(current_player_king) !== -1) {
       // Checkmate
-      if (this.current_player === Players.WHITE.COLOR) {
+      if (this.get_curr_player() === Players.WHITE.COLOR) {
         return MoveStatus.BLACK_WIN;
       } else {
         return MoveStatus.WHITE_WIN;
@@ -217,7 +217,7 @@ class GameState {
 
   static default_board() {
     var black = Players.BLACK.COLOR;
-    var white = Players.BLACK.COLOR;
+    var white = Players.WHITE.COLOR;
     return [
     [new Rook(black, new Location(0, 0)), new Knight(black, new Location(1, 0)), new Bishop(black, new Location(2, 0)), new Queen(black, new Location(3, 0)), new King(black, new Location(4, 0)), new Bishop(black, new Location(5, 0)), new Knight(black, new Location(6, 0)), new Rook(black, new Location(7, 0))],
     [new Pawn(black, new Location(0, 1)), new Pawn(black, new Location(1, 1)), new Pawn(black, new Location(2, 1)), new Pawn(black, new Location(3, 1)), new Pawn(black, new Location(4, 1)), new Pawn(black, new Location(5, 1)), new Pawn(black, new Location(6, 1)), new Pawn(black, new Location(7, 1))],
@@ -345,6 +345,9 @@ class Rook extends Piece {
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
+      if(locations.length == 0){
+        continue;
+      }
       var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
@@ -369,6 +372,9 @@ class Bishop extends Piece {
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
+      if(locations.length == 0){
+        continue;
+      }
       var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
@@ -416,6 +422,9 @@ class Queen extends Piece {
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
+      if(locations.length == 0){
+        continue;
+      }
       var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
