@@ -3,11 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { MoveStatus } from './game/models/MoveStatus.model';
 import { Location } from './game/models/Location.model';
 import { Piece } from './game/models/Piece.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-export interface ColorResponse {
-  color: string;
-  status: MoveStatus;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +12,7 @@ export interface ColorResponse {
 export class RequestService {
   private assignedColor: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snackbar: MatSnackBar) {
     this.assignedColor = "";
   }
 
@@ -27,8 +24,17 @@ export class RequestService {
   }
 
   requestColor(requestedColor: string) {
-    this.http.post<ColorResponse>("/api/color", {color: requestedColor}).subscribe(response => {
-      this.assignedColor = response.color;
+    this.http.post<{color: string, status: string, msg: string}>("/api/color", {color: requestedColor})
+    .subscribe(res => {
+      if (res.status === "Success") {
+        this.assignedColor = res.color;
+      } else {
+        console.log(res);
+        this.snackbar.open(res.msg, "Dismiss", {
+          duration: 5000,
+        });
+      }
+
     });
   }
 
@@ -37,16 +43,13 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    const numericRow = 8 - location.row;
-    const numericCol = location.col.charCodeAt(0) - 97;
-    console.log("getMoves() with row=" + numericRow + ", col=" + numericCol);
-    return this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
+    return this.http.post<{status: string, msg: string, moves: {row: number, col: number}[]}>("/api/get_moves", {
       piece: this.convertToNumericLocation(location)
     });
   }
 
   sendMove(start: Location, end: Location) {
-    return this.http.post<{status: MoveStatus}>("/api/send_move", {
+    return this.http.post<{status: string}>("/api/send_move", {
       start: this.convertToNumericLocation(start),
       end: this.convertToNumericLocation(end)
     });
