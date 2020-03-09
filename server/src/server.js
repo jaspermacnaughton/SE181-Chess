@@ -78,7 +78,7 @@ app.post('/api/send_move', (req,res) => {
         });
         return;
     }
-    if(piece.get_color() == player){
+    if(piece.get_color() != player){
         res.json({
             "status": chess.MoveStatus.INVALID,
             "msg": "Cannot move other player's pieces"
@@ -86,7 +86,7 @@ app.post('/api/send_move', (req,res) => {
         return;
     }
 
-    if(game.get_curr_player() == player){
+    if(game.get_curr_player() != player){
         res.json({
             "status": chess.MoveStatus.INVALID,
             "msg": "Attempting to move out of turn"
@@ -154,7 +154,7 @@ app.post('/api/get_moves', (req,res) => {
         });
         return;
     }
-    if(piece.get_color() == player){
+    if(piece.get_color() != player){
         res.json({
             "status": chess.MoveStatus.INVALID,
             "msg": "Cannot move other player's pieces"
@@ -184,6 +184,7 @@ app.post('/api/color', (req,res) => {
     if(player == -1){
         if(player_ips.length < 2){
             player_ips.push(req.connection.remoteAddress);
+            player = get_player_id(req.connection.remoteAddress);
         }else{
             res.json({
                 "status": chess.MoveStatus.INVALID,
@@ -197,17 +198,17 @@ app.post('/api/color', (req,res) => {
     switch(req.body.color){
         case "white":
             if(player != chess.Players.WHITE.COLOR){
-                color = player_ips[player];
-                player_ips[player] = player_ips[1-player];
-                player_ips[1-player] = color;
+                color = player_ips[chess.Players.WHITE.COLOR];
+                player_ips[chess.Players.WHITE.COLOR] = player_ips[player];
+                player_ips[chess.Players.BLACK.COLOR] = color;
             }
             color = "white";
             break;
         case "black":
             if(player != chess.Players.BLACK.COLOR){
-                color = player_ips[player];
-                player_ips[player] = player_ips[1-player];
-                player_ips[1-player] = color;
+                color = player_ips[chess.Players.BLACK.COLOR];
+                player_ips[chess.Players.BLACK.COLOR] = player_ips[player];
+                player_ips[chess.Players.WHITE.COLOR] = color;
             }
             color = "black";
             break;
