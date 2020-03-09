@@ -45,7 +45,7 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, null],
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
             gameState.set_curr_board(board);
-            assert.equal(gameState.in_check(),true);
+            assert.equal(gameState.in_check(chess.Players.BLACK.COLOR),true);
         });
         it('Pinned pieces', function(){
             board = [
@@ -58,7 +58,7 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, null],
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
             gameState.set_curr_board(board);
-            assert.equal(gameState.in_check(),false);
+            assert.equal(gameState.in_check(chess.Players.BLACK.COLOR),false);
             var start = new chess.Location(0,1);
             var end = new chess.Location(0,0);
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
