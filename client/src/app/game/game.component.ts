@@ -36,6 +36,9 @@ export class GameComponent implements OnInit {
       this.rowVals = this.rowVals.reverse();
       this.colVals = this.colVals.reverse();
     }
+    this.requestService.restart().subscribe(res => {
+
+    });
     this.gameState = new GameState([
       ["&#9820;", "&#9822;", "&#9821;", "&#9819;", "&#9818;", "&#9821;", "&#9822;", "&#9820;"],
       ["&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;"],
@@ -48,7 +51,6 @@ export class GameComponent implements OnInit {
     ]);
     this.selectedPiece = null;
     this.selectedPieceMoves = [];
-    // this.gameState = this.requestService.
   }
 
   getSquareBackground(row: number, col: string): string {
@@ -135,10 +137,20 @@ export class GameComponent implements OnInit {
   }
 
   onRestart() {
-    this.requestService.restart();
+    this.requestService.restart().subscribe(res => {
+      console.log("Restart returned");
+    });
   }
 
   onResign() {
-    this.requestService.resign();
+    this.requestService.resign().subscribe(res => {
+      console.log("Resign returned");
+    });
+  }
+
+  onSync() {
+    this.requestService.sync().subscribe(res => {
+      console.log(res);
+    });
   }
 }

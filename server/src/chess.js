@@ -118,8 +118,7 @@ class GameState {
           if (piece instanceof King) {
             current_player_king = new Location(row, col);
           }
-          if (piece.get_moves(this).length !== 0) {
-            //TODO something
+          if (piece.get_valid_moves(this).length !== 0) {
             has_valid_moves = true;
           }
         } else {
@@ -127,12 +126,17 @@ class GameState {
         }
       }
     }
-    if (!has_valid_moves && attacked_positions.indexOf(current_player_king) !== -1) {
-      // Checkmate
-      if (this.get_curr_player() === Players.WHITE.COLOR) {
-        return MoveStatus.BLACK_WIN;
-      } else {
-        return MoveStatus.WHITE_WIN;
+
+    if (!has_valid_moves){
+      if(this.in_check(this.get_curr_player())){
+        // Checkmate
+        if (this.get_curr_player() === Players.WHITE.COLOR) {
+          return MoveStatus.BLACK_WIN;
+        } else {
+          return MoveStatus.WHITE_WIN;
+        }
+      }else{
+        return MoveStatus.STALE_MATE;
       }
     }
     return MoveStatus.SUCCESS;
@@ -157,9 +161,12 @@ class GameState {
       // 1 goes to 0 and 0 goes to 1 which are the color representations
       this.current_player = !this.current_player;
 
+      // If the new player is in check then inform client
+      if(this.in_check(this.current_player)){
+        return MoveStatus.SUCCESS_CHECK;
+      }
       return MoveStatus.SUCCESS;
     }
-
     return MoveStatus.INVALID;
   }
 
@@ -213,6 +220,40 @@ class GameState {
   move_piece(loc1, loc2) {
     this.board[loc2.row][loc2.col] = this.board[loc1.row][loc1.col];
     this.board[loc1.row][loc1.col] = null;
+  }
+
+  // A player is in check if the OTHER player is attacking the King of the player
+  in_check(player){
+    var row, col;
+    var attacked_positions = [];
+    var player_king = undefined;
+    for (row = 0; row < this.board.length; row++) {
+      for (col = 0; col < this.board[0].length; col++) {
+        var piece = this.board[row][col];
+        if(piece === null){
+            // no piece
+            continue;
+        }
+        if(piece.get_color() === player){
+            if(piece instanceof King){
+                player_king = piece;
+            }
+        }else{
+            attacked_positions = attacked_positions.concat(piece.get_moves(this));
+        }
+      }
+    }
+    // If no king nothing to check, so false
+    if(player_king === undefined){
+        return false;
+    }
+    var i;
+    for(i = 0; i < attacked_positions.length; i++){
+        if(attacked_positions[i].get_human_readable() === player_king.get_curr_loc().get_human_readable()){
+            return true;
+        }
+    }
+    return false;
   }
 
   static default_board() {
@@ -294,6 +335,30 @@ class Piece {
     }
     return false;
   }
+
+  get_valid_moves(gs){
+    return this.remove_moves_still_in_check(gs, this.get_moves(gs));
+  }
+
+  remove_moves_still_in_check(gs, locs){
+    if(locs == null || locs.length == 0){
+        return [];
+    }
+    var valid_moves = [];
+    var [orig_row, orig_col] = this.loc.get();
+    locs.forEach((loc) => {
+        var piece = gs.get_piece_on_board(loc);
+        gs.move_piece(new Location(orig_row, orig_col), loc);
+        this.set_location(loc);
+        if(!gs.in_check(this.get_color())){
+            valid_moves.push(loc);
+        }
+        gs.move_piece(loc, new Location(orig_row, orig_col));
+        this.set_location(new Location(orig_row, orig_col));
+        gs.set_piece_on_board(piece, loc);
+    });
+    return valid_moves;
+  }
 }
 
 class Pawn extends Piece {
@@ -319,6 +384,7 @@ class Pawn extends Piece {
     return this.end_row;
   }
 
+  // Doesn't do forward 2 from home row or en passant
   get_moves(gs) {
     var locations = [];
     var capture_dirs = [Direction.LEFT, Direction.RIGHT];
@@ -354,18 +420,21 @@ class Rook extends Piece {
   get_moves(gs) {
     var possible_dirs = Object.values(Direction);
     var locations = [];
+    var new_locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
-      locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
-      if(locations.length == 0){
-        continue;
+      new_locations = gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]);
+      var capture_loc;
+      if(new_locations.length == 0){
+        capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
+      }else{
+        locations = locations.concat(new_locations.slice(0,-1));
+        capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
-      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
       }
     }
     return locations;
-
   }
 }
 class Bishop extends Piece {
@@ -381,12 +450,16 @@ class Bishop extends Piece {
   get_moves(gs) {
     var possible_dirs = [[Direction.UP, Direction.LEFT], [Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.LEFT], [Direction.DOWN, Direction.RIGHT]];
     var locations = [];
+    var new_locations;
     for (var index = 0; index < possible_dirs.length; index++) {
-      locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
-      if(locations.length == 0){
-        continue;
+      new_locations = gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]);
+      var capture_loc;
+      if(new_locations.length == 0){
+        capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
+      }else{
+        locations = locations.concat(new_locations.slice(0,-1));
+        capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
-      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
       }
@@ -433,12 +506,16 @@ class Queen extends Piece {
   get_moves(gs) {
     var possible_dirs = Object.values(Direction).concat([[Direction.UP, Direction.LEFT], [Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.LEFT], [Direction.DOWN, Direction.RIGHT]]);
     var locations = [];
+    var new_locations;
     for (var index = 0; index < possible_dirs.length; index++) {
-      locations = locations.concat(gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]));
-      if(locations.length == 0){
-        continue;
+      new_locations = gs.get_empty_loc_along_dir(super.get_curr_loc(), possible_dirs[index]);
+      var capture_loc;
+      if(new_locations.length == 0){
+        capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
+      }else{
+        locations = locations.concat(new_locations.slice(0,-1));
+        capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
-      var capture_loc = locations[locations.length - 1].get_new_loc(possible_dirs[index]);
       if (super.can_capture(gs, capture_loc)) {
         locations.push(capture_loc);
       }

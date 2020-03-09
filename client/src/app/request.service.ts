@@ -54,10 +54,14 @@ export class RequestService {
   }
 
   resign() {
-    this.http.post("/api/resign", {});
+    return this.http.post("/api/resign", {});
   }
 
   restart() {
+    return this.http.post("/api/restart", {});
+  }
 
+  sync() {
+    return this.http.post("/api/sync", {});
   }
 }
