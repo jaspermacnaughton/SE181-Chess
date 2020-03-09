@@ -396,6 +396,8 @@ class Knight extends Piece {
   get_moves(gs) {
     var possible_dirs = [[Direction.UP, Direction.UP, Direction.LEFT],
     [Direction.UP, Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.DOWN, Direction.LEFT],
+    [Direction.DOWN, Direction.DOWN, Direction.RIGHT], [Direction.UP, Direction.LEFT, Direction.LEFT],
+    [Direction.UP, Direction.RIGHT, Direction.RIGHT], [Direction.DOWN, Direction.LEFT, Direction.LEFT],
     [Direction.DOWN, Direction.RIGHT, Direction.RIGHT]];
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
