@@ -192,7 +192,7 @@ app.post('/api/resign', (req,res) => {
         return;
     }
 
-    game = new chess.GameState(chess.default_board(), player_ips, chess.Players.WHITE.COLOR);
+    game = new chess.GameState(chess.GameState.default_board(), player_ips, chess.Players.WHITE.COLOR);
 
     if(player == chess.Players.WHITE.COLOR){
         winner = chess.Players.BLACK.COLOR;

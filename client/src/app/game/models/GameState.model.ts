@@ -44,7 +44,7 @@ export class GameState {
     // this.setValue(start, this.blankChar);
   }
 
-  // updateState(values: string[][]) {
-  //   this.values = values;
-  // }
+  updateState(pieces: Piece[][]) {
+    this.pieces = pieces;
+  }
 }
