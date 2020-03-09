@@ -56,7 +56,12 @@ export class RequestService {
     });
   }
 
+  resetGame() {
+    this.assignedColor = "";
+  }
+
   resign() {
+    this.resetGame();
     return this.http.post("/api/resign", {});
   }
 

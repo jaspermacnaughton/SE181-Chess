@@ -15,7 +15,6 @@ export class GameComponent implements OnInit {
   color: string;
   rowVals: number[];
   colVals: string[];
-  isTurn: boolean;
   boardLoaded: boolean;
   blank = "&#160"; // If use empty string div doesn't render
   gameState: GameState;
@@ -28,16 +27,9 @@ export class GameComponent implements OnInit {
     this.boardLoaded = false;
     const blank = this.blank;
     this.color = this.requestService.getAssignedColor();
-    if (this.color == null) {
-      console.log("DEV: No Color selected: Defaulting to white");
-      this.color = "white";
-    }
     this.rowVals = [8, 7, 6, 5, 4, 3, 2, 1];
     this.colVals = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    if (this.color === "white") {
-      this.isTurn = true;
-    } else {
-      this.isTurn = false;
+    if (this.color !== "white") {
       this.rowVals = this.rowVals.reverse();
       this.colVals = this.colVals.reverse();
     }
@@ -45,16 +37,6 @@ export class GameComponent implements OnInit {
       this.gameState = new GameState(res.GameState.board);
       this.boardLoaded = true;
     });
-    // this.gameState = new GameState([
-    //   ["&#9820;", "&#9822;", "&#9821;", "&#9819;", "&#9818;", "&#9821;", "&#9822;", "&#9820;"],
-    //   ["&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;"],
-    //   [blank, blank, blank, blank, blank, blank, blank, blank],
-    //   [blank, blank, blank, blank, blank, blank, blank, blank],
-    //   [blank, blank, blank, blank, blank, blank, blank, blank],
-    //   [blank, blank, blank, blank, blank, blank, blank, blank],
-    //   ["&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;"],
-    //   ["&#9814;", "&#9816;", "&#9815;", "&#9813;", "&#9812;", "&#9815;", "&#9816;", "&#9814;"]
-    // ]);
     this.selectedPiece = null;
     this.selectedPieceMoves = [];
   }
@@ -99,10 +81,6 @@ export class GameComponent implements OnInit {
   }
 
   onClickSquare(row: number, col: string) {
-    // if (!this.isTurn) {
-    //   this.openSnackBar("Not your turn", 5);
-    //   return;
-    // }
     const clickedLocation = new Location(row, col);
     if (this.selectedPiece == null) {
       // Then we have yet to select a piece
@@ -148,12 +126,13 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
-      if (res.status === "Success" || res.status === "SuccessCheck" || res.status === "WhiteWin" ||
-      res.status === "BlackWin" || res.status === "Stalemate") {
+      if (res.status === "Success" || res.status === "SuccessCheck") {
         this.gameState.move(this.selectedPiece, location);
         this.selectedPiece = null;
         this.selectedPieceMoves = [];
-        this.isTurn = false;
+      } else if (res.status === "WhiteWin" || res.status === "BlackWin" || res.status === "Stalemate") {
+        this.requestService.resetGame();
+        this.openSnackBar(res.status, 5);
       } else if (res.status === "Invalid") {
         this.openSnackBar(res.msg, 5);
         this.selectedPiece = null;
@@ -165,12 +144,10 @@ export class GameComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('Dialog result: ' + result);
           this.requestService.sendMove(this.selectedPiece, location, result).subscribe(res => {
             this.gameState.move(this.selectedPiece, location);
             this.selectedPiece = null;
             this.selectedPieceMoves = [];
-            this.isTurn = false;
             this.onSync();
           });
         });
@@ -189,20 +166,19 @@ export class GameComponent implements OnInit {
 
   onRestart() {
     this.requestService.restart().subscribe(res => {
-      console.log("Restart returned");
+      this.openSnackBar("Restarting game", 3);
       this.onSync();
     });
   }
 
   onResign() {
     this.requestService.resign().subscribe(res => {
-      console.log("Resign returned");
+      this.openSnackBar("You lose", 5);
     });
   }
 
   onSync() {
     this.requestService.sync().subscribe(res => {
-      console.log(res);
       this.gameState.updateState(res.GameState.board);
     });
   }
