@@ -36,54 +36,6 @@ describe('gameState', function (){
     });
 });
 
-<<<<<<< HEAD
-=======
-
-describe('king', function (){
-    var gameState = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
-    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Players.indexOf(Player2));
-    var color = chess.Players.BLACK.COLOR;
-    describe('#get_moves()', function(){
-        var location = new chess.Location(0,5);
-		var king = new chess.King(color, location);
-		var moves = king.get_moves(gameState);
-        it('King cannot move onto a space occupied by a same color piece', function (){
-			var location = new chess.Location(0,5);
-			var king = new chess.King(color, location);
-			var moves = king.get_moves(gameState);
-            assert.equal(moves.length, 0);
-        });
-        moves = king.get_moves(emptyState);
-        it('King cannot move up if in uppermost position',function (){
-            assert.equal(moves.length, 5);
-            assert.notEqual(moves[2].row, -1);
-        });
-        location.set(7,5);
-        king.set_location(location);
-        moves = king.get_moves(emptyState);
-        it('King cannot move down if in lowermost position',function (){
-            assert.equal(moves.length, 5);
-            assert.notEqual(moves[3].row,8)
-        });
-        location.set(5,0);
-        king.set_location(location);
-        moves = king.get_moves(emptyState);
-        it('King cannot move left if in leftmost position',function (){
-            assert.equal(moves.length, 5);
-            assert.notEqual(moves[1].col,-1)
-        });
-        location.set(5,7);
-        king.set_location(location);
-        moves = king.get_moves(emptyState);
-        it('King cannot move right if in rightmost position',function (){
-            assert.equal(moves.length, 5);
-            assert.notEqual(moves[0].col,8)
-        });
-    });
-});
-
-
->>>>>>> cbbf62211b656113b224ad3e397ba0279475c95c
 describe('pawn', function (){
 	it('should be able to move two spaces forward upon start', function() {
 		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
