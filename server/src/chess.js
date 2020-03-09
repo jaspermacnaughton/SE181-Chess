@@ -141,22 +141,19 @@ class GameState {
   //TODO: check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
-    // if end location is a valid move
-    if (piece.get_moves(this).indexOf(end) !== -1) {
-      // if piece is a pawn and moving to last row we need a promotion
-      if (piece instanceof Pawn && (piece.get_end_row() === end.get()[0])) {
-        if(promotion !== null){
-            var success = this.promote_piece(promotion, end);
-            if(!success){
-                return MoveStatus.INVALID;
-            }
-        }else{
-            // Pawn needs promotion
-            return MoveStatus.PROMOTION_REQUIRED;
-        }
+	var [row,col] = end.get();
+    if (!(row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1))) {
+      if (piece instanceof Pawn && (piece.get_end_row() === row) && promotion === null) {
+        return MoveStatus.PROMOTION_REQUIRED;
       }
       this.move_piece(start, end);
       piece.set_location(end);
+      if (promotion !== null) {
+        var success = this.promote_piece(promotion, end);
+        if (!success){
+            return MoveStatus.INVALID;
+        }
+      }
       // 1 goes to 0 and 0 goes to 1 which are the color representations
       this.current_player = !this.current_player;
 
@@ -303,14 +300,14 @@ class Pawn extends Piece {
 
   constructor(color, loc) {
     var display = Players.WHITE.PAWN;
-    var forward_move = Direction.UP;
-    var start_row = 2;
-    var end_row = 7;
+    var forward_move = Direction.DOWN;
+    var start_row = 6;
+    var end_row = 0;
     if (color === Players.BLACK.COLOR) {
       display = Players.BLACK.PAWN;
-      end_row = 2;
-      start_row = 7;
-      forward_move = Direction.DOWN;
+	  start_row = 1;
+      end_row = 7;
+      forward_move = Direction.UP;
     }
     super(color, loc, display);
     this.start_row = start_row;
