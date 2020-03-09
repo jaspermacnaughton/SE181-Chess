@@ -114,6 +114,18 @@ describe('gameState', function (){
             var start = new chess.Location(6,2);
             var end = new chess.Location(7,2);
             assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.INVALID);
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Knight"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Bishop"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
         })
         it('if game isn\'t over, then game_over() returns MoveStatus.SUCCESS',function() {
             gameState.set_curr_board(chess.GameState.default_board());
@@ -132,6 +144,25 @@ describe('gameState', function (){
             gameState.set_curr_board(board);
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.game_over(), chess.MoveStatus.STALE_MATE);
+        });
+        it('Valid move checker works',function() {
+            var location = new chess.Location(7,7);
+            board = [
+            [new chess.King(BLACK, new chess.Location(0,0)), null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(WHITE);
+            var test_queen = new chess.Queen(WHITE, new chess.Location(2,2));
+            var loc = new chess.Location(1,1);
+            assert.equal(test_queen.valid_move(gameState,loc),true);
+            loc.set(0,1);
+            assert.equal(test_queen.valid_move(gameState,loc),false);
         })
     });
 });
