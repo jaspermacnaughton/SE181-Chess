@@ -260,14 +260,14 @@ class GameState {
     var black = Players.BLACK.COLOR;
     var white = Players.WHITE.COLOR;
     return [
-    [new Rook(black, new Location(0, 0)), new Knight(black, new Location(1, 0)), new Bishop(black, new Location(2, 0)), new Queen(black, new Location(3, 0)), new King(black, new Location(4, 0)), new Bishop(black, new Location(5, 0)), new Knight(black, new Location(6, 0)), new Rook(black, new Location(7, 0))],
-    [new Pawn(black, new Location(0, 1)), new Pawn(black, new Location(1, 1)), new Pawn(black, new Location(2, 1)), new Pawn(black, new Location(3, 1)), new Pawn(black, new Location(4, 1)), new Pawn(black, new Location(5, 1)), new Pawn(black, new Location(6, 1)), new Pawn(black, new Location(7, 1))],
+    [new Rook(black, new Location(0, 0)), new Knight(black, new Location(0, 1)), new Bishop(black, new Location(0, 2)), new Queen(black, new Location(0, 3)), new King(black, new Location(0, 4)), new Bishop(black, new Location(0, 5)), new Knight(black, new Location(0, 6)), new Rook(black, new Location(0, 7))],
+    [new Pawn(black, new Location(1, 0)), new Pawn(black, new Location(1, 1)), new Pawn(black, new Location(1, 2)), new Pawn(black, new Location(1, 3)), new Pawn(black, new Location(1, 4)), new Pawn(black, new Location(1, 5)), new Pawn(black, new Location(1, 6)), new Pawn(black, new Location(1, 7))],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null, null],
-    [new Pawn(white, new Location(0, 6)), new Pawn(white, new Location(1, 6)), new Pawn(white, new Location(2, 6)), new Pawn(white, new Location(3, 6)), new Pawn(white, new Location(4, 6)), new Pawn(white, new Location(5, 6)), new Pawn(white, new Location(6, 6)), new Pawn(white, new Location(7, 6))],
-    [new Rook(white, new Location(0, 7)), new Knight(white, new Location(1, 7)), new Bishop(white, new Location(2, 7)), new Queen(white, new Location(3, 7)), new King(white, new Location(4, 7)), new Bishop(white, new Location(5, 7)), new Knight(white, new Location(6, 7)), new Rook(white, new Location(7, 7))]
+    [new Pawn(white, new Location(6, 0)), new Pawn(white, new Location(6, 1)), new Pawn(white, new Location(6, 2)), new Pawn(white, new Location(6, 3)), new Pawn(white, new Location(6, 4)), new Pawn(white, new Location(6, 5)), new Pawn(white, new Location(6, 6)), new Pawn(white, new Location(6, 7))],
+    [new Rook(white, new Location(7, 0)), new Knight(white, new Location(7, 1)), new Bishop(white, new Location(7, 2)), new Queen(white, new Location(7, 3)), new King(white, new Location(7, 4)), new Bishop(white, new Location(7, 5)), new Knight(white, new Location(7, 6)), new Rook(white, new Location(7, 7))]
     ];
   }
   static empty_board() {
