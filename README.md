@@ -15,7 +15,7 @@ To find code coverage you can run
 
 # Static Analysis
 -   Run `cd server/`
--   Run `node_modules/jshint/bin/jshint --verbose src/
+-   Run `node_modules/jshint/bin/jshint --verbose src/`
 Any issues will be displayed, if nothing is found output will be empty (Not sure how to force an output)
 
 
