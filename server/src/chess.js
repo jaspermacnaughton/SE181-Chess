@@ -145,7 +145,14 @@ class GameState {
   //TODO: check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
+    if(piece === null){
+        return MoveStatus.INVALID;
+    }
 	var [row,col] = end.get();
+    if(piece.get_color() != this.current_player){
+        console.log("Trying to move incorrect piece color");
+        return MoveStatus.INVALID;
+    }
     if (!(row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1))) {
       if (piece instanceof Pawn && (piece.get_end_row() === row) && promotion === null) {
         return MoveStatus.PROMOTION_REQUIRED;
