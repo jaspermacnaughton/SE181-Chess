@@ -198,6 +198,17 @@ describe('gameState', function (){
     });
 });
 
+describe('piece', function(){
+    it('cannot call abstract methods', function(){
+        var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
+        var color = chess.Players.WHITE;
+        var location = new chess.Location(0,0);
+        var display = chess.Players.WHITE.PAWN;
+        var test_piece = new chess.Piece(color,location,display);
+        assert.throws(function () {test_piece.get_moves(gameState) }, Error, 'Abstract Method');
+        assert.throws(function () {test_piece.get_end_row() }, Error, 'Abstract Method');
+    })
+})
 describe('pawn', function (){
 	it('should be able to move two spaces forward upon start', function() {
 		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));

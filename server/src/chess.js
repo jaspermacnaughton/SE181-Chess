@@ -342,7 +342,7 @@ class Piece {
   }
 
   get_end_row() {
-    throw new Error('Not Implemented');
+    throw new Error('Abstract Method');
   }
 
   get_curr_loc() {
@@ -584,6 +584,7 @@ module.exports = {
   Players: Players,
   MoveStatus: MoveStatus,
   Location: Location,
+  Piece: Piece,
   Pawn: Pawn,
   King: King,
   Bishop: Bishop,
