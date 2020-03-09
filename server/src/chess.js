@@ -155,7 +155,7 @@ class GameState {
             return MoveStatus.PROMOTION_REQUIRED;
         }
       }
-      this.swap_locations(start, end);
+      this.move_piece(start, end);
       piece.set_location(end);
       // 1 goes to 0 and 0 goes to 1 which are the color representations
       this.current_player = !this.current_player;
@@ -213,10 +213,9 @@ class GameState {
     return empty_locations;
   }
 
-  swap_locations(loc1, loc2) {
-    var tmp = this.board[loc1.row][loc1.col];
-    this.board[loc1.row][loc1.col] = this.board[loc2.row][loc2.col];
-    this.board[loc2.row][loc2.col] = tmp;
+  move_piece(loc1, loc2) {
+    this.board[loc2.row][loc2.col] = this.board[loc1.row][loc1.col];
+    this.board[loc1.row][loc1.col] = null;
   }
 
   static default_board() {
