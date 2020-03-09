@@ -7,6 +7,10 @@ export class GameState {
   private blankChar = "&#160";
 
   constructor(pieces: Piece[][]) {
+    this.setPieces(pieces);
+  }
+
+  private setPieces(pieces: Piece[][]) {
     this.pieces = pieces;
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < this.pieces.length; i++) {
@@ -40,11 +44,13 @@ export class GameState {
   }
 
   move(start: Location, end: Location) {
-    this.setValue(end, this.inLocation(start));
-    // this.setValue(start, this.blankChar);
+    if (this.inLocation(start) != null) {
+      this.setValue(end, this.inLocation(start));
+      this.setValue(start, new Piece(this.blankChar));
+    }
   }
 
   updateState(pieces: Piece[][]) {
-    this.pieces = pieces;
+    this.setPieces(pieces);
   }
 }
