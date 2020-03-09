@@ -80,6 +80,7 @@ describe('gameState', function (){
             assert.equal(gameState.in_check(BLACK), true);
             start.set(0,0);
             end.set(0,1);
+            assert.equal(gameState.game_over(),chess.MovesStatus.WHITE_WIN);
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
