@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RequestService } from '../request.service';
 import { GameState } from './models/GameState.model';
 import { Location } from './models/Location.model';
+import { MoveStatus } from './models/MoveStatus.model';
 
 @Component({
   selector: 'app-game',
@@ -13,6 +14,7 @@ export class GameComponent implements OnInit {
   rowVals: number[];
   colVals: string[];
   isTurn: boolean;
+  boardLoaded: boolean;
   blank = "&#160"; // If use empty string div doesn't render
   gameState: GameState;
   selectedPiece: Location;
@@ -21,6 +23,7 @@ export class GameComponent implements OnInit {
   constructor(private requestService: RequestService) { }
 
   ngOnInit(): void {
+    this.boardLoaded = false;
     const blank = this.blank;
     this.color = this.requestService.getAssignedColor();
     if (this.color == null) {
@@ -36,19 +39,20 @@ export class GameComponent implements OnInit {
       this.rowVals = this.rowVals.reverse();
       this.colVals = this.colVals.reverse();
     }
-    this.requestService.restart().subscribe(res => {
-
+    this.requestService.sync().subscribe(res => {
+      this.gameState = new GameState(res.GameState.board);
+      this.boardLoaded = true;
     });
-    this.gameState = new GameState([
-      ["&#9820;", "&#9822;", "&#9821;", "&#9819;", "&#9818;", "&#9821;", "&#9822;", "&#9820;"],
-      ["&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;"],
-      [blank, blank, blank, blank, blank, blank, blank, blank],
-      [blank, blank, blank, blank, blank, blank, blank, blank],
-      [blank, blank, blank, blank, blank, blank, blank, blank],
-      [blank, blank, blank, blank, blank, blank, blank, blank],
-      ["&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;"],
-      ["&#9814;", "&#9816;", "&#9815;", "&#9813;", "&#9812;", "&#9815;", "&#9816;", "&#9814;"]
-    ]);
+    // this.gameState = new GameState([
+    //   ["&#9820;", "&#9822;", "&#9821;", "&#9819;", "&#9818;", "&#9821;", "&#9822;", "&#9820;"],
+    //   ["&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;", "&#9823;"],
+    //   [blank, blank, blank, blank, blank, blank, blank, blank],
+    //   [blank, blank, blank, blank, blank, blank, blank, blank],
+    //   [blank, blank, blank, blank, blank, blank, blank, blank],
+    //   [blank, blank, blank, blank, blank, blank, blank, blank],
+    //   ["&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;", "&#9817;"],
+    //   ["&#9814;", "&#9816;", "&#9815;", "&#9813;", "&#9812;", "&#9815;", "&#9816;", "&#9814;"]
+    // ]);
     this.selectedPiece = null;
     this.selectedPieceMoves = [];
   }
@@ -89,7 +93,7 @@ export class GameComponent implements OnInit {
   }
 
   getInLocation(row: number, col: string): string {
-    return this.gameState.inLocation(new Location(row, col));
+    return this.gameState.inLocationDisplay(new Location(row, col));
   }
 
   onClickSquare(row: number, col: string) {
@@ -132,8 +136,13 @@ export class GameComponent implements OnInit {
   }
 
   private moveSelectedPiece(location: Location) {
-    this.requestService.sendMove(this.selectedPiece, location);
-    this.gameState.move(this.selectedPiece, location);
+    this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
+      // if (res.status === MoveStatus.Success) {
+        this.gameState.move(this.selectedPiece, location);
+      // } else {
+      //   console.log("Error moving piece: " + res.status);
+      // }
+    });
   }
 
   onRestart() {
@@ -150,7 +159,7 @@ export class GameComponent implements OnInit {
 
   onSync() {
     this.requestService.sync().subscribe(res => {
-      console.log(res);
+      this.gameState.updateState(res.GameState.board);
     });
   }
 }
