@@ -118,7 +118,8 @@ describe('gameState', function (){
             assert.equal(gameState.game_over(),chess.MoveStatus.BLACK_WIN);
         });
         it('Check for valid pawn promotion', function(){
-            board = [
+            function gboard(){
+                return [
                 [new chess.King(BLACK, new chess.Location(0,0)),null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
@@ -128,7 +129,9 @@ describe('gameState', function (){
                 [null,null,new chess.Pawn(BLACK,new chess.Location(6,2)),null,null,null,null,null],
                 [null,null,null,null,null,null,null,new chess.King(WHITE, new chess.Location(7,7))]
             ];
-            board2 = [
+            }
+            function gboard2(){
+                return [
                 [new chess.King(BLACK, new chess.Location(0,0)),null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
@@ -137,30 +140,31 @@ describe('gameState', function (){
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 [null,null,new chess.Knight(BLACK,new chess.Location(7,2)),null,null,null,null,new chess.King(WHITE, new chess.Location(7,7))]
-            ];
-            gameState.set_curr_board(board);
+                ];
+            }
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             var start = new chess.Location(6,2);
             var end = new chess.Location(7,2);
             assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Knight"),chess.MoveStatus.SUCCESS);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             gameState.move_piece(start, end);
-            var testState = new chess.GameState(board2, Players, Players.indexOf(Player2));
+            var testState = new chess.GameState(gboard2(), Players, Players.indexOf(Player2));
             assert.equal(matching_boards(gameState.promote_piece('Knight', end),testState), true);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Bishop"),chess.MoveStatus.SUCCESS);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
-            gameState.set_curr_board(board);
+            gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
         })
