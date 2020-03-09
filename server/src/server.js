@@ -185,8 +185,10 @@ app.post('/api/color', (req,res) => {
         if(player_ips.length < 2){
             player_ips.push(req.connection.remoteAddress);
         }else{
-            res.write("Already have two players");
-            res.end();
+            res.json({
+                "status": chess.MoveStatus.INVALID,
+                "msg": "Already have two players"
+            });
             return;
         }
     }
@@ -215,7 +217,7 @@ app.post('/api/color', (req,res) => {
     }
 
     res.json({
-        "status" : chess.MoveStatus.Success,
+        "status" : chess.MoveStatus.SUCCESS,
         "color" : color
     });
 });
