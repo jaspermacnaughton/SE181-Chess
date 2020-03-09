@@ -1,6 +1,5 @@
 var assert = require('assert');
 var chess = require(__dirname + '/../src/chess.js');
-
 const Player1 = "PLAYER1";
 const Player2 = "PLAYER2";
 var Players = [Player1, Player2];
@@ -15,8 +14,50 @@ describe('gameState', function (){
             assert.equal(gameState.get_curr_player(), Players.indexOf("PLAYER1"));
             assert.equal(matching_boards(gameState.get_curr_board(), chess.GameState.default_board()), true);
         });
+
     });
 });
+
+describe('king', function (){
+    var gameState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
+    var color = chess.Players.WHITE.COLOR;
+    describe('#get_moves()', function(){
+        var location = new chess.Location(0,5);
+        var king = new chess.King(color, location);
+        var moves = king.get_moves(gameState);
+        it('King cannot move onto a space occupied by a same color piece', function (){
+            assert.equal(moves.length, 0);
+        });
+        moves = king.get_moves(emptyState);
+        it('King cannot move up if in uppermost position',function (){
+            assert.equal(moves.length, 5);
+            assert.notEqual(moves[2].row, -1);
+        });
+        location.set(7,5);
+        king.set_location(location);
+        moves = king.get_moves(emptyState);
+        it('King cannot move down if in lowermost position',function (){
+            assert.equal(moves.length, 5);
+            assert.notEqual(moves[3].row,8)
+        });
+        location.set(5,0);
+        king.set_location(location);
+        moves = king.get_moves(emptyState);
+        it('King cannot move left if in leftmost position',function (){
+            assert.equal(moves.length, 5);
+            assert.notEqual(moves[1].col,-1)
+        });
+        location.set(5,7);
+        king.set_location(location);
+        moves = king.get_moves(emptyState);
+        it('King cannot move right if in rightmost position',function (){
+            assert.equal(moves.length, 5);
+            assert.notEqual(moves[0].col,8)
+        });
+    });
+});
+
 
 function matching_boards(gb1, gb2){
     if(gb1 == null || gb2 == null){

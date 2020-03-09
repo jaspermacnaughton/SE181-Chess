@@ -195,8 +195,8 @@ class GameState {
     var [row, col] = loc.get();
     if (row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1)) {
         return undefined;
-    } 
-    return this.board[row][col]; 
+    }
+    return this.board[row][col];
   }
 
   get_empty_loc_along_dir(curr_loc, dir) {
@@ -229,7 +229,18 @@ class GameState {
     [new Rook(white, new Location(0, 7)), new Knight(white, new Location(1, 7)), new Bishop(white, new Location(2, 7)), new Queen(white, new Location(3, 7)), new King(white, new Location(4, 7)), new Bishop(white, new Location(5, 7)), new Knight(white, new Location(6, 7)), new Rook(white, new Location(7, 7))]
     ];
   }
-
+  static empty_board() {
+      return [
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null],
+      ]
+  }
 }
 class Piece {
 
@@ -435,7 +446,7 @@ class King extends Piece {
   }
 
   get_moves(gs) {
-    var possible_dirs = Object.values(Direction);
+    var possible_dirs = Object.values(Direction).concat([[Direction.UP, Direction.LEFT], [Direction.UP, Direction.RIGHT], [Direction.DOWN, Direction.LEFT], [Direction.DOWN, Direction.RIGHT]]);
     var locations = [];
     for (var index = 0; index < possible_dirs.length; index++) {
       var next_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
@@ -451,5 +462,6 @@ module.exports = {
   GameState: GameState,
   Players: Players,
   MoveStatus: MoveStatus,
-  Location: Location
+  Location: Location,
+  King: King
 };
