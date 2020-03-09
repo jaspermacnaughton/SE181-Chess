@@ -138,24 +138,28 @@ class GameState {
     return MoveStatus.SUCCESS;
   }
 
-  //TODO: add promotion logic
-  //      check for check
+  //TODO: check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
-    if (end.indexOf(end) !== -1) {
+    // if end location is a valid move
+    if (piece.get_moves(this).indexOf(end) !== -1) {
+      // if piece is a pawn and moving to last row we need a promotion
       if (piece instanceof Pawn && (piece.get_end_row() === end.get()[0])) {
-        return MoveStatus.PROMOTION_REQUIRED;
+        if(promotion !== null){
+            var success = this.promote_piece(promotion, end);
+            if(!success){
+                return MoveStatus.INVALID;
+            }
+        }else{
+            // Pawn needs promotion
+            return MoveStatus.PROMOTION_REQUIRED;
+        }
       }
       this.swap_locations(start, end);
       piece.set_location(end);
-      if (promotion !== null) {
-        var success = this.promote_piece(promotion, end);
-        if (!success){
-            return MoveStatus.INVALID;
-        }
-      }
-      this.current_player = !this.current_player;
       // 1 goes to 0 and 0 goes to 1 which are the color representations
+      this.current_player = !this.current_player;
+
       return MoveStatus.SUCCESS;
     }
 
