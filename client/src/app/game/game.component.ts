@@ -106,7 +106,6 @@ export class GameComponent implements OnInit {
       // Then we have yet to select a piece
 
       if (this.gameState.isEmpty(clickedLocation)) {
-        // FIXME: Also check if piece is correct color clientside?
         return;
       }
 
@@ -123,6 +122,8 @@ export class GameComponent implements OnInit {
       this.selectedPieceMoves.forEach(potentialMove => {
         if (clickedLocation.isEqual(this.selectedPiece)) {
           // If user just clicks back on selected piece just unselect all
+          this.selectedPiece = null;
+          this.selectedPieceMoves = [];
           return;
         }
         if (clickedLocation.isEqual(potentialMove)) {
@@ -130,8 +131,6 @@ export class GameComponent implements OnInit {
           return;
         }
       });
-      this.selectedPiece = null;
-      this.selectedPieceMoves = [];
     }
   }
 
@@ -139,6 +138,8 @@ export class GameComponent implements OnInit {
     this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
       // if (res.status === MoveStatus.Success) {
         this.gameState.move(this.selectedPiece, location);
+        this.selectedPiece = null;
+        this.selectedPieceMoves = [];
       // } else {
       //   console.log("Error moving piece: " + res.status);
       // }
