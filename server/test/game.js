@@ -157,13 +157,13 @@ describe('gameState', function (){
             assert.equal(matching_boards(gameState.promote_piece('Knight', end),testState), true);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
-            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS);
+            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS_CHECK);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Bishop"),chess.MoveStatus.SUCCESS);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
-            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
+            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS_CHECK);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
