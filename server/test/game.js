@@ -83,6 +83,10 @@ describe('gameState', function (){
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
+        it('if game isn\'t over, then game_over() returns MoveStatus.SUCCESS',function() {
+            gameState.set_curr_board(chess.GameState.default_board());
+            assert.equal(gameState.game_over(),chess.MoveStatus.SUCCESS);
+        })
         it('Stalemate works as it should',function() {
             board = [
             [null, null, null, new chess.King(BLACK, new chess.Location(0,3)), null, null, null, null],

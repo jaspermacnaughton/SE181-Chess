@@ -156,7 +156,7 @@ class GameState {
         return MoveStatus.INVALID;
     }
 	var [row,col] = end.get();
-    if(piece.get_color() != this.current_player){
+    if(piece.get_color() !== this.current_player){
         // Trying to move incorrect piece color
         return MoveStatus.INVALID;
     }
