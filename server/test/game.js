@@ -6,6 +6,13 @@ var Players = [Player1, Player2];
 const BLACK = chess.Players.BLACK.COLOR;
 const WHITE = chess.Players.WHITE.COLOR;
 
+
+describe('location', function (){
+    var location = new chess.Location(0,0);
+    it('get_human_readable() returns readable string', function() {
+        assert.equal(location.get_human_readable(),'@1');
+    });
+});
 describe('gameState', function (){
     var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
     describe('#restart()', function (){
@@ -194,21 +201,24 @@ describe('gameState', function (){
             assert.equal(test_queen.valid_move(gameState,loc),true);
             loc.set(0,1);
             assert.equal(test_queen.valid_move(gameState,loc),false);
-        })
+        });
     });
 });
 
 describe('piece', function(){
+    var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
+    var color = chess.Players.WHITE;
+    var location = new chess.Location(0,0);
+    var display = chess.Players.WHITE.PAWN;
+    var test_piece = new chess.Piece(color,location,display);
     it('cannot call abstract methods', function(){
-        var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
-        var color = chess.Players.WHITE;
-        var location = new chess.Location(0,0);
-        var display = chess.Players.WHITE.PAWN;
-        var test_piece = new chess.Piece(color,location,display);
         assert.throws(function () {test_piece.get_moves(gameState) }, Error, 'Abstract Method');
         assert.throws(function () {test_piece.get_end_row() }, Error, 'Abstract Method');
+    });
+    it('display() returns display', function() {
+        assert.equal(test_piece.get_display(),display);
     })
-})
+});
 describe('pawn', function (){
 	it('should be able to move two spaces forward upon start', function() {
 		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
