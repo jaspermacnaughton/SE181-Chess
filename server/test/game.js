@@ -207,8 +207,8 @@ describe('bishop', function(){
         var location = new chess.Location(0,0);
         var bishop = new chess.Bishop(color,location);
         var moves = bishop.get_moves(emptyState);
-        it('Bishop can move diagnoally, horizontally, or vertically any number of spaces', function (){
-            assert.equal(moves.length, 21);
+        it('Bishop can move diagnoally any number of spaces', function (){
+            assert.equal(moves.length, 7);
         });
     });
 });
