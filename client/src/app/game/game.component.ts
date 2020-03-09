@@ -149,6 +149,7 @@ export class GameComponent implements OnInit {
   onRestart() {
     this.requestService.restart().subscribe(res => {
       console.log("Restart returned");
+      this.onSync();
     });
   }
 
