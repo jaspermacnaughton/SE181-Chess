@@ -46,6 +46,18 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
             gameState.set_curr_board(board);
             assert.equal(gameState.in_check(chess.Players.BLACK.COLOR),true);
+            board = [
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            assert.equal(gameState.in_check(BLACK),false);
+
         });
         it('Pinned pieces', function(){
             board = [
