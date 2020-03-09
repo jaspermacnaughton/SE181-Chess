@@ -84,6 +84,20 @@ describe('gameState', function (){
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
+        it('Stalemate works as it should',function() {
+            board = [
+            [null, null, null, new chess.King(BLACK, new chess.Location(0,3)), null, null, null, null],
+            [null, null ,null, new chess.Bishop(WHITE, new chess.Location(1,3)), null, null, null, null],
+            [null, null, null, new chess.King(WHITE, new chess.Location(2,3)), null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null]];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.game_over(), chess.MoveStatus.STALE_MATE);
+        })
     });
 });
 

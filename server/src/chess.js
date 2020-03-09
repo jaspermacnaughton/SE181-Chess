@@ -95,6 +95,10 @@ class GameState {
     return this.current_player;
   }
 
+  set_curr_player(player) {
+      this.current_player = player;
+  }
+
   get_curr_board() {
     return this.board;
   }
