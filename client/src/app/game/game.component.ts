@@ -3,6 +3,7 @@ import { RequestService } from '../request.service';
 import { GameState } from './models/GameState.model';
 import { Location } from './models/Location.model';
 import { MoveStatus } from './models/MoveStatus.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-game',
@@ -20,7 +21,7 @@ export class GameComponent implements OnInit {
   selectedPiece: Location;
   selectedPieceMoves: Location[];
 
-  constructor(private requestService: RequestService) { }
+  constructor(private requestService: RequestService, private snackbar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.boardLoaded = false;
@@ -97,10 +98,12 @@ export class GameComponent implements OnInit {
   }
 
   onClickSquare(row: number, col: string) {
-    // if (!this.isTurn) {
-    //   console.log("Not your turn");
-    //   return;
-    // }
+    if (!this.isTurn) {
+      this.snackbar.open("Not your turn", "Dismiss", {
+        duration: 5000,
+      });
+      return;
+    }
     const clickedLocation = new Location(row, col);
     if (this.selectedPiece == null) {
       // Then we have yet to select a piece
@@ -120,6 +123,7 @@ export class GameComponent implements OnInit {
     } else {
       // Piece has already been selected - if in selected piece array make move
       if (this.selectedPieceMoves.length < 1) {
+        // If no pieces just unselect
         this.selectedPiece = null;
       } else {
         this.selectedPieceMoves.forEach(potentialMove => {
