@@ -40,7 +40,6 @@ export class GameComponent implements OnInit {
       this.colVals = this.colVals.reverse();
     }
     this.requestService.sync().subscribe(res => {
-      console.log(res.GameState);
       this.gameState = new GameState(res.GameState.board);
       this.boardLoaded = true;
     });
@@ -138,11 +137,11 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
-      if (res.status === MoveStatus.Success) {
+      // if (res.status === MoveStatus.Success) {
         this.gameState.move(this.selectedPiece, location);
-      } else {
-        console.log("Error moving piece: " + res.status);
-      }
+      // } else {
+      //   console.log("Error moving piece: " + res.status);
+      // }
     });
   }
 
@@ -160,7 +159,7 @@ export class GameComponent implements OnInit {
 
   onSync() {
     this.requestService.sync().subscribe(res => {
-      console.log(res);
+      this.gameState.updateState(res.GameState.board);
     });
   }
 }
