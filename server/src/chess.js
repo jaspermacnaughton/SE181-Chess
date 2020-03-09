@@ -226,7 +226,7 @@ class GameState {
   in_check(player){
     var row, col;
     var attacked_positions = [];
-    var player_king;
+    var player_king = undefined;
     for (row = 0; row < this.board.length; row++) {
       for (col = 0; col < this.board[0].length; col++) {
         var piece = this.board[row][col];
@@ -242,6 +242,10 @@ class GameState {
             attacked_positions = attacked_positions.concat(piece.get_moves(this));
         }
       }
+    }
+    // If no king nothing to check, so false
+    if(player_king === undefined){
+        return false;
     }
     var i;
     for(i = 0; i < attacked_positions.length; i++){

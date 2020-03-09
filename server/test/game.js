@@ -38,8 +38,8 @@ describe('gameState', function (){
 
 
 describe('king', function (){
-    var gameState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
-    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
+    var gameState = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
+    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Players.indexOf(Player2));
     var color = chess.Players.BLACK.COLOR;
     describe('#get_moves()', function(){
         var location = new chess.Location(0,5);
@@ -83,7 +83,7 @@ describe('king', function (){
 
 describe('pawn', function (){
 	it('should be able to move two spaces forward upon start', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(1,1));
 		var valid_moves = pawn_black.get_moves(state);
 		var expected_location = new chess.Location(2,1);
@@ -99,7 +99,7 @@ describe('pawn', function (){
 		assert.equal(list_contains(valid_moves, expected_location), true);
 	});
 	it('should ONLY be able to move one space if not blocked if not in start', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(3,1));
 		var valid_moves = pawn_black.get_moves(state);
 		var expected_location = new chess.Location(4,1);
@@ -115,7 +115,7 @@ describe('pawn', function (){
 		assert.equal(list_contains(valid_moves, unexpected_location), false);
 	});
 	it('should NOT be able to move one space if blocked', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(2,1));
 		state.set_piece_on_board(new chess.Rook(chess.Players.BLACK.COLOR, new chess.Location(3,1)), new chess.Location(3,1));
 		var valid_moves = pawn_black.get_moves(state);
@@ -128,7 +128,7 @@ describe('pawn', function (){
 		assert.equal(list_contains(valid_moves, unexpected_location), false);
 	});
 	it('should be able to capture along diagonals', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(2,2));
 		state.set_piece_on_board(new chess.Rook(chess.Players.WHITE.COLOR, new chess.Location(3,1)), new chess.Location(3,1));
 		state.set_piece_on_board(new chess.Rook(chess.Players.WHITE.COLOR, new chess.Location(3,3)), new chess.Location(3,3)); 
@@ -148,7 +148,7 @@ describe('pawn', function (){
 		assert.equal(list_contains(valid_moves, expected_location), true);
 	});
 	it('should NOT be able to capture same color piece', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(2,2));
 		state.set_piece_on_board(new chess.Rook(chess.Players.BLACK.COLOR, new chess.Location(3,1)), new chess.Location(3,1));
 		var valid_moves = pawn_black.get_moves(state);
@@ -162,7 +162,7 @@ describe('pawn', function (){
 		assert.equal(list_contains(valid_moves, unexpected_location), false);
 	});
 	it('should NOT be able to move off board', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn1 = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(2,0));
 		var pawn2 = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(2,7));
 		var pawn3 = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(7,2));
@@ -185,7 +185,7 @@ describe('pawn', function (){
 	});
 	
 	it('pawn should be able to promote on other side board', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(6,2));
 		state.set_piece_on_board(pawn_black, new chess.Location(6,2));
 		var pawn_white = new chess.Pawn(chess.Players.WHITE.COLOR, new chess.Location(1,2));
@@ -201,7 +201,7 @@ describe('pawn', function (){
 	});
 	
 	it('pawn is promoted', function() {
-		var state = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
 		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(6,2));
 		state.set_piece_on_board(pawn_black, new chess.Location(6,2));
 		var pawn_white = new chess.Pawn(chess.Players.WHITE.COLOR, new chess.Location(1,2));
