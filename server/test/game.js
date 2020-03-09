@@ -30,8 +30,6 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
 
         var gameState = new chess.GameState(board, Players, BLACK);
-            console.log("HERE");
-            console.log(gameState.game_over());
         it('Game over for basic checkmate', function (){
             assert.equal(gameState.game_over(), chess.MoveStatus.WHITE_WIN);
         });
