@@ -33,6 +33,36 @@ describe('gameState', function (){
         it('Game over for basic checkmate', function (){
             assert.equal(gameState.game_over(), chess.MoveStatus.WHITE_WIN);
         });
+        it('in_check() returns true when game is in check',function() {
+            var location = new chess.Location(7,7);
+            board = [
+            [new chess.King(BLACK, new chess.Location(0,0)), null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            assert.equal(gameState.in_check(),true);
+        });
+        it('Pinned pieces', function(){
+            board = [
+            [null, new chess.King(BLACK, new chess.Location(0,1)), null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            assert.equal(gameState.in_check(),false);
+            var start = new chess.Location(0,1);
+            var end = new chess.Location(0,0);
+            assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
+        })
     });
 });
 

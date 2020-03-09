@@ -99,6 +99,10 @@ class GameState {
     return this.board;
   }
 
+  set_curr_board(board) {
+      this.board = board;
+  }
+
   // Just check if there are any valid moves for a player?
   // If none then check if current player is in check then they lost
   // Else it's a stalemate?
@@ -152,7 +156,7 @@ class GameState {
       }
       this.move_piece(start, end);
       piece.set_location(end);
-      if (promotion !== null) {
+      if (promotion != null) {
         var success = this.promote_piece(promotion, end);
         if (!success){
             return MoveStatus.INVALID;
