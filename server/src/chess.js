@@ -99,6 +99,10 @@ class GameState {
     return this.board;
   }
 
+  set_curr_board(board) {
+      this.board = board;
+  }
+
   // Just check if there are any valid moves for a player?
   // If none then check if current player is in check then they lost
   // Else it's a stalemate?
@@ -145,14 +149,21 @@ class GameState {
   //TODO: check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
+    if(piece === null){
+        return MoveStatus.INVALID;
+    }
 	var [row,col] = end.get();
+    if(piece.get_color() != this.current_player){
+        console.log("Trying to move incorrect piece color");
+        return MoveStatus.INVALID;
+    }
     if (!(row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1))) {
       if (piece instanceof Pawn && (piece.get_end_row() === row) && promotion === null) {
         return MoveStatus.PROMOTION_REQUIRED;
       }
       this.move_piece(start, end);
       piece.set_location(end);
-      if (promotion !== null) {
+      if (promotion != null) {
         var success = this.promote_piece(promotion, end);
         if (!success){
             return MoveStatus.INVALID;
@@ -226,7 +237,7 @@ class GameState {
   in_check(player){
     var row, col;
     var attacked_positions = [];
-    var player_king = undefined;
+    var player_king;
     for (row = 0; row < this.board.length; row++) {
       for (col = 0; col < this.board[0].length; col++) {
         var piece = this.board[row][col];
@@ -280,7 +291,7 @@ class GameState {
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
-      ]
+      ];
   }
 }
 class Piece {
