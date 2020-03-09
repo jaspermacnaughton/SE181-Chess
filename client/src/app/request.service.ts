@@ -48,10 +48,11 @@ export class RequestService {
     });
   }
 
-  sendMove(start: Location, end: Location) {
-    return this.http.post<{status: string}>("/api/send_move", {
+  sendMove(start: Location, end: Location, promotion?: string) {
+    return this.http.post<{status: string, msg: string}>("/api/send_move", {
       start: this.convertToNumericLocation(start),
-      end: this.convertToNumericLocation(end)
+      end: this.convertToNumericLocation(end),
+      promotion
     });
   }
 

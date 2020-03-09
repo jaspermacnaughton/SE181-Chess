@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { RequestService } from '../request.service';
 import { GameState } from './models/GameState.model';
 import { Location } from './models/Location.model';
-import { MoveStatus } from './models/MoveStatus.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-game',
@@ -99,10 +99,10 @@ export class GameComponent implements OnInit {
   }
 
   onClickSquare(row: number, col: string) {
-    if (!this.isTurn) {
-      this.openSnackBar("Not your turn", 5);
-      return;
-    }
+    // if (!this.isTurn) {
+    //   this.openSnackBar("Not your turn", 5);
+    //   return;
+    // }
     const clickedLocation = new Location(row, col);
     if (this.selectedPiece == null) {
       // Then we have yet to select a piece
@@ -115,17 +115,11 @@ export class GameComponent implements OnInit {
       this.requestService.getMoves(clickedLocation).subscribe(res => {
         if (res.status === "Success") {
           res.moves.forEach(move => {
-            console.log("Added move");
             const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
             this.selectedPieceMoves.push(moveObject);
           });
-        } else if (res.status === "Invalid") {
-          this.openSnackBar(res.msg, 5);
-        } else if (res.status === "PromotionRequired") {
-          this.openSnackBar("Promotion!", 5);
-        } else {
-          console.log("Unknown response status: " + res.status);
-          console.log(res);
+        } else { // if (res.status === "Invalid")
+          this.openSnackBar(res.status + ": " + res.msg, 5);
         }
       });
     } else {
@@ -152,13 +146,32 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
-      if (res.status === "Success") {
+      if (res.status === "Success" || res.status === "SuccessCheck" || res.status === "WhiteWin" ||
+      res.status === "BlackWin" || res.status === "Stalemate") {
         this.gameState.move(this.selectedPiece, location);
         this.selectedPiece = null;
         this.selectedPieceMoves = [];
         this.isTurn = false;
+      } else if (res.status === "Invalid") {
+        this.openSnackBar(res.msg, 5);
+      } else if (res.status === "PromotionRequired") {
+
+        const dialogRef = this.dialog.open(PromotionDialogComponent, {
+          width: '250px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('Dialog result: ' + result);
+          this.requestService.sendMove(this.selectedPiece, location, result).subscribe(res => {
+            this.gameState.move(this.selectedPiece, location);
+            this.selectedPiece = null;
+            this.selectedPieceMoves = [];
+            this.isTurn = false;
+          });
+        });
       } else {
-        console.log("Error moving piece: " + res.status);
+        console.log("Unknown response status: " + res.status);
+        console.log(res);
       }
     });
   }
@@ -187,5 +200,22 @@ export class GameComponent implements OnInit {
       console.log(res);
       this.gameState.updateState(res.GameState.board);
     });
+  }
+}
+
+@Component({
+  selector: 'app-promotion-dialog',
+  templateUrl: 'promotion-dialog.html',
+})
+
+export class PromotionDialogComponent {
+  promotion: string;
+
+  constructor(public dialogRef: MatDialogRef<PromotionDialogComponent>) {
+    this.promotion = "Queen";
+  }
+
+  onSelect(): void {
+    this.dialogRef.close();
   }
 }

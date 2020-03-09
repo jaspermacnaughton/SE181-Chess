@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Select piece to promote your pawn to</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Select an option</mat-label>
+    <mat-select [(value)]="promotion">
+      <mat-option value="Queen">Queen</mat-option>
+      <mat-option value="Rook">Rook</mat-option>
+      <mat-option value="Bishop">Bishop</mat-option>
+      <mat-option value="Knight">Knight</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="promotion">Select</button>
+  <!-- <button mat-button (click)="onSelect('Bishop')" [mat-dialog-close]="bishop">Bishop</button>
+  <button mat-button (click)="onSelect('Knight')" [mat-dialog-close]="knight">Knight</button> -->
+</div>
