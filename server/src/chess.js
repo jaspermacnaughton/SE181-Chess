@@ -146,7 +146,6 @@ class GameState {
     return MoveStatus.SUCCESS;
   }
 
-  //TODO: check for check
   play_move(start, end, promotion) {
     var piece = this.get_piece_on_board(start);
     if(piece === null){
@@ -154,7 +153,17 @@ class GameState {
     }
 	var [row,col] = end.get();
     if(piece.get_color() != this.current_player){
-        console.log("Trying to move incorrect piece color");
+        // Trying to move incorrect piece color
+        return MoveStatus.INVALID;
+    }
+    var isValid = false;
+    piece.get_valid_moves(this).forEach((loc)=>{
+        if(end.isEqual(loc)){
+            isValid = true;
+        }
+    });
+    // Not a move that can be made
+    if(!isValid){
         return MoveStatus.INVALID;
     }
     if (!(row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1))) {
