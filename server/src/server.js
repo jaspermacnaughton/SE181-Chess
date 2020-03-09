@@ -162,7 +162,7 @@ app.post('/api/get_moves', (req,res) => {
         return;
     }
 
-    var moves = piece.get_moves(game);
+    var moves = piece.get_valid_moves(game);
 
     res.json({
         "status" : chess.MoveStatus.Success,
