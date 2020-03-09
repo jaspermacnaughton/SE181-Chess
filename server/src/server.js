@@ -197,17 +197,17 @@ app.post('/api/color', (req,res) => {
     switch(req.body.color){
         case "white":
             if(player != chess.Players.WHITE.COLOR){
-                color = player_ips[0];
-                player_ips[0] = player_ips[1];
-                player_ips[1] = color;
+                color = player_ips[player];
+                player_ips[player] = player_ips[1-player];
+                player_ips[1-player] = color;
             }
             color = "white";
             break;
         case "black":
             if(player != chess.Players.BLACK.COLOR){
-                color = player_ips[0];
-                player_ips[0] = player_ips[1];
-                player_ips[1] = color;
+                color = player_ips[player];
+                player_ips[player] = player_ips[1-player];
+                player_ips[1-player] = color;
             }
             color = "black";
             break;
@@ -215,6 +215,7 @@ app.post('/api/color', (req,res) => {
             color = (player) ? "white" : "black";
             break;
     }
+    game.players = player_ips;
 
     res.json({
         "status" : chess.MoveStatus.SUCCESS,
