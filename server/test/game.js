@@ -157,13 +157,13 @@ describe('gameState', function (){
             assert.equal(matching_boards(gameState.promote_piece('Knight', end),testState), true);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
-            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS);
+            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS_CHECK);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Bishop"),chess.MoveStatus.SUCCESS);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
-            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
+            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS_CHECK);
             gameState.set_curr_board(gboard());
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
@@ -206,6 +206,18 @@ describe('gameState', function (){
             assert.equal(test_queen.valid_move(gameState,loc),false);
         });
     });
+	it('If a board state is repeated across 3 moves from each client then each player receives a draw',function() {
+            var gameState = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
+			gameState.set_piece_on_board(new chess.Bishop(chess.Players.BLACK.COLOR, new chess.Location(1,6)), new chess.Location(1,6));
+			gameState.set_piece_on_board(new chess.Bishop(chess.Players.WHITE.COLOR, new chess.Location(7,6)), new chess.Location(7,6));
+			gameState.set_curr_player(BLACK);
+			gameState.play_move(new chess.Location(1,6), new chess.Location(2,5), null);
+			gameState.play_move(new chess.Location(7,2), new chess.Location(6,2), null);
+			gameState.play_move(new chess.Location(2,5), new chess.Location(1,6), null);
+			gameState.play_move(new chess.Location(6,2), new chess.Location(7,2), null);
+			gameState.play_move(new chess.Location(1,6), new chess.Location(2,5), null);
+			assert.equal(gameState.play_move(new chess.Location(7,2), new chess.Location(6,2), null), chess.MoveStatus.DRAW);
+        });
 });
 
 describe('piece', function(){
@@ -360,6 +372,21 @@ describe('pawn', function (){
 		assert.equal(new_piece instanceof chess.Bishop, true);
 
 	});
+	it('can perform en passant', function() {
+		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));
+		var pawn_black = new chess.Pawn(chess.Players.BLACK.COLOR, new chess.Location(1,5));
+		var pawn_white = new chess.Pawn(chess.Players.WHITE.COLOR, new chess.Location(3,6));
+		state.play_move(new chess.Location(1,5), new chess.Location(3,5), null);
+
+		var valid_moves = pawn_white.get_moves(state);
+		expected_location = new chess.Location(2,5);
+		assert.equal(list_contains(valid_moves, expected_location), true);
+		assert.equal(state.play_move(new chess.Location(3,6), new chess.Location(2,5), null), chess.MoveStatus.SUCCESS);
+		assert.equal(state.get_piece_on_board(new chess.Location(3,5)), null);
+		
+	});
+	
+	
 });
 
 

@@ -5,7 +5,8 @@ const MoveStatus = {
   BLACK_WIN: 'BlackWin',
   WHITE_WIN: 'WhiteWin',
   STALE_MATE: 'StaleMate',
-  PROMOTION_REQUIRED: 'PromotionRequired'
+  PROMOTION_REQUIRED: 'PromotionRequired',
+  DRAW: 'Draw' // Unimplemented 
 };
 const Players = {
   WHITE: {
@@ -176,6 +177,7 @@ class GameState {
             return MoveStatus.PROMOTION_REQUIRED;
         }else{
             var success = this.promote_piece(promotion, start);
+            piece = this.get_piece_on_board(start);
             if(success == MoveStatus.PROMOTION_REQUIRED){
                 return MoveStatus.PROMOTION_REQUIRED;
             }else if(!success){
