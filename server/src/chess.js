@@ -427,7 +427,7 @@ class Rook extends Piece {
       if(new_locations.length == 0){
         capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
       }else{
-        locations = locations.concat(new_locations.slice(0,-1));
+        locations = locations.concat(new_locations);
         capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
       if (super.can_capture(gs, capture_loc)) {
@@ -457,7 +457,7 @@ class Bishop extends Piece {
       if(new_locations.length == 0){
         capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
       }else{
-        locations = locations.concat(new_locations.slice(0,-1));
+        locations = locations.concat(new_locations);
         capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
       if (super.can_capture(gs, capture_loc)) {
@@ -513,7 +513,7 @@ class Queen extends Piece {
       if(new_locations.length == 0){
         capture_loc = super.get_curr_loc().get_new_loc(possible_dirs[index]);
       }else{
-        locations = locations.concat(new_locations.slice(0,-1));
+        locations = locations.concat(new_locations);
         capture_loc = new_locations[new_locations.length - 1].get_new_loc(possible_dirs[index]);
       }
       if (super.can_capture(gs, capture_loc)) {
