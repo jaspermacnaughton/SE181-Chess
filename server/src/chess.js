@@ -183,7 +183,11 @@ class GameState {
         }
       }
       // 1 goes to 0 and 0 goes to 1 which are the color representations
-      this.current_player = !this.current_player;
+      if(this.current_player == Players.BLACK.COLOR){
+        this.current_player = Players.WHITE.COLOR;
+      }else{
+        this.current_player = Players.BLACK.COLOR;
+      }
 
       // If the new player is in check then inform client
       if(this.in_check(this.current_player)){
@@ -273,7 +277,7 @@ class GameState {
     }
     var i;
     for(i = 0; i < attacked_positions.length; i++){
-        if(attacked_positions[i].get_human_readable() === player_king.get_curr_loc().get_human_readable()){
+        if(attacked_positions[i].isEqual(player_king.get_curr_loc())){
             return true;
         }
     }

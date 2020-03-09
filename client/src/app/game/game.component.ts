@@ -116,7 +116,6 @@ export class GameComponent implements OnInit {
         if (res.status === "Success") {
           res.moves.forEach(move => {
             console.log("Added move");
-
             const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
             this.selectedPieceMoves.push(moveObject);
           });
