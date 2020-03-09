@@ -6,6 +6,13 @@ var Players = [Player1, Player2];
 const BLACK = chess.Players.BLACK.COLOR;
 const WHITE = chess.Players.WHITE.COLOR;
 
+
+describe('location', function (){
+    var location = new chess.Location(0,0);
+    it('get_human_readable() returns readable string', function() {
+        assert.equal(location.get_human_readable(),'@1');
+    });
+});
 describe('gameState', function (){
     var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
     describe('#restart()', function (){
@@ -46,6 +53,18 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
             gameState.set_curr_board(board);
             assert.equal(gameState.in_check(chess.Players.BLACK.COLOR),true);
+            board = [
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            assert.equal(gameState.in_check(BLACK),false);
+
         });
         it('Pinned pieces', function(){
             board = [
@@ -83,6 +102,76 @@ describe('gameState', function (){
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
+        it('WhiteWin and BlackWin are returned when the respective side wins',function(){
+            assert.equal(gameState.game_over(), chess.MoveStatus.WHITE_WIN);
+            board = [
+                [new chess.King(WHITE, new chess.Location(0,0)), null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [new chess.Queen(BLACK, new chess.Location(2,0)), new chess.Queen(BLACK, new chess.Location(2,1)), null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, new chess.King(BLACK, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(WHITE);
+            assert.equal(gameState.game_over(),chess.MoveStatus.BLACK_WIN);
+        });
+        it('Check for valid pawn promotion', function(){
+            function gboard(){
+                return [
+                [new chess.King(BLACK, new chess.Location(0,0)),null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,new chess.Pawn(BLACK,new chess.Location(6,2)),null,null,null,null,null],
+                [null,null,null,null,null,null,null,new chess.King(WHITE, new chess.Location(7,7))]
+            ];
+            }
+            function gboard2(){
+                return [
+                [new chess.King(BLACK, new chess.Location(0,0)),null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,new chess.Knight(BLACK,new chess.Location(7,2)),null,null,null,null,new chess.King(WHITE, new chess.Location(7,7))]
+                ];
+            }
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            var start = new chess.Location(6,2);
+            var end = new chess.Location(7,2);
+            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Knight"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            gameState.move_piece(start, end);
+            var testState = new chess.GameState(gboard2(), Players, Players.indexOf(Player2));
+            assert.equal(matching_boards(gameState.promote_piece('Knight', end),testState), true);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Rook"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Bishop"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(gboard());
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
+        })
+        it('if game isn\'t over, then game_over() returns MoveStatus.SUCCESS',function() {
+            gameState.set_curr_board(chess.GameState.default_board());
+            assert.equal(gameState.game_over(),chess.MoveStatus.SUCCESS);
+        });
         it('Stalemate works as it should',function() {
             board = [
             [null, null, null, new chess.King(BLACK, new chess.Location(0,3)), null, null, null, null],
@@ -96,10 +185,43 @@ describe('gameState', function (){
             gameState.set_curr_board(board);
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.game_over(), chess.MoveStatus.STALE_MATE);
-        })
+        });
+        it('Valid move checker works',function() {
+            var location = new chess.Location(7,7);
+            board = [
+            [new chess.King(BLACK, new chess.Location(0,0)), null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new chess.Queen(WHITE, new chess.Location(2,2)), null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(WHITE);
+            var test_queen = new chess.Queen(WHITE, new chess.Location(2,2));
+            var loc = new chess.Location(1,1);
+            assert.equal(test_queen.valid_move(gameState,loc),true);
+            loc.set(0,1);
+            assert.equal(test_queen.valid_move(gameState,loc),false);
+        });
     });
 });
 
+describe('piece', function(){
+    var gameState = new chess.GameState(null, Players, Players.indexOf(Player2));
+    var color = chess.Players.WHITE;
+    var location = new chess.Location(0,0);
+    var display = chess.Players.WHITE.PAWN;
+    var test_piece = new chess.Piece(color,location,display);
+    it('cannot call abstract methods', function(){
+        assert.throws(function () {test_piece.get_moves(gameState) }, Error, 'Abstract Method');
+        assert.throws(function () {test_piece.get_end_row() }, Error, 'Abstract Method');
+    });
+    it('display() returns display', function() {
+        assert.equal(test_piece.get_display(),display);
+    })
+});
 describe('pawn', function (){
 	it('should be able to move two spaces forward upon start', function() {
 		var state = new chess.GameState(chess.GameState.default_board(), Players, Players.indexOf(Player2));

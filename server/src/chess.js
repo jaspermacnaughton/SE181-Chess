@@ -156,7 +156,7 @@ class GameState {
         return MoveStatus.INVALID;
     }
 	var [row,col] = end.get();
-    if(piece.get_color() != this.current_player){
+    if(piece.get_color() !== this.current_player){
         // Trying to move incorrect piece color
         return MoveStatus.INVALID;
     }
@@ -171,18 +171,21 @@ class GameState {
         return MoveStatus.INVALID;
     }
     if (!(row < 0 || col < 0 || row > (this.board.length - 1) || col > (this.board.length - 1))) {
-      if (piece instanceof Pawn && (piece.get_end_row() === row) && promotion === null) {
-        return MoveStatus.PROMOTION_REQUIRED;
+      if (piece instanceof Pawn && (piece.get_end_row() === row)) {
+        if(promotion === null){
+            return MoveStatus.PROMOTION_REQUIRED;
+        }else{
+            var success = this.promote_piece(promotion, start);
+            if(success == MoveStatus.PROMOTION_REQUIRED){
+                return MoveStatus.PROMOTION_REQUIRED;
+            }else if(!success){
+                return MoveStatus.INVALID;
+            }
+        }
       }
       this.move_piece(start, end);
       piece.set_location(end);
-      if (promotion != null) {
-        var success = this.promote_piece(promotion, end);
-        if (!success){
-            return MoveStatus.INVALID;
-        }
-      }
-      // 1 goes to 0 and 0 goes to 1 which are the color representations
+
       if(this.current_player == Players.BLACK.COLOR){
         this.current_player = Players.WHITE.COLOR;
       }else{
@@ -214,6 +217,8 @@ class GameState {
       case 'Queen':
         new_piece = new Queen(piece.get_color(), loc);
         break;
+      default:
+        return MoveStatus.PROMOTION_REQUIRED;
     }
     return this.set_piece_on_board(new_piece, loc);
   }
@@ -307,7 +312,7 @@ class GameState {
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
-          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null]
       ];
   }
 }
@@ -337,7 +342,7 @@ class Piece {
   }
 
   get_end_row() {
-    throw new Error('Not Implemented');
+    throw new Error('Abstract Method');
   }
 
   get_curr_loc() {
@@ -579,6 +584,7 @@ module.exports = {
   Players: Players,
   MoveStatus: MoveStatus,
   Location: Location,
+  Piece: Piece,
   Pawn: Pawn,
   King: King,
   Bishop: Bishop,
