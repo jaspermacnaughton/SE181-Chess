@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MoveStatus } from './game/models/MoveStatus.model';
 import { Location } from './game/models/Location.model';
+import { Observable } from 'rxjs';
 
 export interface ColorResponse {
   color: string;
@@ -15,12 +16,13 @@ export interface ColorResponse {
 export class RequestService {
   private assignedColor: string;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient) {
+    this.assignedColor = "";
+  }
 
   requestColor(requestedColor: string) {
     this.http.post<ColorResponse>("/api/color", {color: requestedColor}).subscribe(response => {
       this.assignedColor = response.color;
-      this.router.navigateByUrl("/play");
     });
   }
 
@@ -29,11 +31,15 @@ export class RequestService {
   }
 
   getMoves(location: Location) {
-    return this.http.post<{status: MoveStatus, moves: Location[]}>("/api/get_moves", {piece:
-      {
-        row: 8 - location.row,
-        col: location.col.charCodeAt(0) - 97}
-      });
+    const numericRow = 8 - location.row;
+    const numericCol = location.col.charCodeAt(0) - 97;
+    console.log("getMoves() with row=" + numericRow + ", col=" + numericCol);
+    return this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
+      piece: {
+        row: numericRow,
+        col: numericCol
+      }
+    });
   }
 
   sendMove(start: Location, end: Location) {

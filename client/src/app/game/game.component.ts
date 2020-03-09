@@ -91,7 +91,6 @@ export class GameComponent implements OnInit {
   }
 
   onClickSquare(row: number, col: string) {
-    console.log("WARNING: not checking whether its your turn!");
     // if (!this.isTurn) {
     //   console.log("Not your turn");
     //   return;
@@ -106,16 +105,18 @@ export class GameComponent implements OnInit {
       }
 
       this.selectedPiece = clickedLocation;
-      // FIXME: Make request here
       this.requestService.getMoves(clickedLocation).subscribe(res => {
-        this.selectedPieceMoves = res.moves;
+        res.moves.forEach(move => {
+          console.log("Returned: row=" + move.row + ", col=" + move.col);
+          const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
+          this.selectedPieceMoves.push(moveObject);
+        });
       });
-      // FIXME: Also handle if click blank space/not their piece
     } else {
       // Piece has already been selected - if in selected piece array make move
       this.selectedPieceMoves.forEach(potentialMove => {
         if (clickedLocation.isEqual(this.selectedPiece)) {
-          // If user just clicks back on selected piece just
+          // If user just clicks back on selected piece just unselect all
           return;
         }
         if (clickedLocation.isEqual(potentialMove)) {
@@ -129,7 +130,6 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.gameState.move(this.selectedPiece, location);
-
   }
 
   onRestart() {
