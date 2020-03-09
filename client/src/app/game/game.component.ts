@@ -120,6 +120,8 @@ export class GameComponent implements OnInit {
           });
         } else { // if (res.status === "Invalid")
           this.openSnackBar(res.status + ": " + res.msg, 5);
+          this.selectedPiece = null;
+          this.selectedPieceMoves = [];
         }
       });
     } else {
@@ -154,6 +156,8 @@ export class GameComponent implements OnInit {
         this.isTurn = false;
       } else if (res.status === "Invalid") {
         this.openSnackBar(res.msg, 5);
+        this.selectedPiece = null;
+        this.selectedPieceMoves = [];
       } else if (res.status === "PromotionRequired") {
 
         const dialogRef = this.dialog.open(PromotionDialogComponent, {
@@ -167,6 +171,7 @@ export class GameComponent implements OnInit {
             this.selectedPiece = null;
             this.selectedPieceMoves = [];
             this.isTurn = false;
+            this.onSync();
           });
         });
       } else {
