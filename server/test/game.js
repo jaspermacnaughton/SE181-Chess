@@ -179,6 +179,8 @@ describe('pawn', function (){
 		state.set_piece_on_board(null, new chess.Location(0,2));
 		var is_promotion = state.play_move(new chess.Location(6,2), new chess.Location(7,2), null);
 		assert.equal(is_promotion, chess.MoveStatus.PROMOTION_REQUIRED);
+		var is_promotion = state.play_move(new chess.Location(6,2), new chess.Location(7,2), 'Rook');
+		assert.equal(state.get_piece_on_board(new chess.Location(7,2)) instanceof chess.Rook, true);
 
 		is_promotion = state.play_move(new chess.Location(1,2), new chess.Location(0,2), null);
 		assert.equal(is_promotion, chess.MoveStatus.PROMOTION_REQUIRED);
