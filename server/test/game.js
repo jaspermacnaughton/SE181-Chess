@@ -126,6 +126,9 @@ describe('gameState', function (){
             gameState.set_curr_board(board);
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Queen"),chess.MoveStatus.SUCCESS);
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
         })
         it('if game isn\'t over, then game_over() returns MoveStatus.SUCCESS',function() {
             gameState.set_curr_board(chess.GameState.default_board());
