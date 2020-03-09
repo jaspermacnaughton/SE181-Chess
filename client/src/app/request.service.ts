@@ -16,12 +16,13 @@ export interface ColorResponse {
 export class RequestService {
   private assignedColor: string;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient) {
+    this.assignedColor = "";
+  }
 
   requestColor(requestedColor: string) {
     this.http.post<ColorResponse>("/api/color", {color: requestedColor}).subscribe(response => {
       this.assignedColor = response.color;
-      this.router.navigateByUrl("/play");
     });
   }
 

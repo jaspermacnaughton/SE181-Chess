@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RequestService } from './request.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
+
+  constructor(private requestService: RequestService) {}
+
+  colorHasBeenSelected(): boolean {
+    return this.requestService.getAssignedColor() !== "";
+  }
 }
