@@ -5,7 +5,8 @@ const MoveStatus = {
   BLACK_WIN: 'BlackWin',
   WHITE_WIN: 'WhiteWin',
   STALE_MATE: 'StaleMate',
-  PROMOTION_REQUIRED: 'PromotionRequired'
+  PROMOTION_REQUIRED: 'PromotionRequired',
+  DRAW: 'Draw' // Unimplemented 
 };
 const Players = {
   WHITE: {
