@@ -307,7 +307,7 @@ class GameState {
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
-          [null,null,null,null,null,null,null,null],
+          [null,null,null,null,null,null,null,null]
       ];
   }
 }

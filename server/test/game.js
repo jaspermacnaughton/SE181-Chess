@@ -83,10 +83,42 @@ describe('gameState', function (){
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
+        it('WhiteWin and BlackWin are returned when the respective side wins',function(){
+            assert.equal(gameState.game_over(), chess.MoveStatus.WHITE_WIN);
+            board = [
+                [new chess.King(WHITE, new chess.Location(0,0)), null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [new chess.Queen(BLACK, new chess.Location(2,0)), new chess.Queen(BLACK, new chess.Location(2,1)), null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, new chess.King(BLACK, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(WHITE);
+            assert.equal(gameState.game_over(),chess.MoveStatus.BLACK_WIN);
+        });
+        it('Check for valid pawn promotion', function(){
+            board = [
+                [new chess.King(BLACK, new chess.Location(0,0)),null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,new chess.Pawn(BLACK,new chess.Location(6,2)),null,null,null,null,null],
+                [null,null,null,null,null,null,null,new chess.King(WHITE, new chess.Location(7,7))]
+            ];
+            gameState.set_curr_board(board);
+            gameState.set_curr_player(BLACK);
+            var start = new chess.Location(6,2);
+            var end = new chess.Location(7,2);
+            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.INVALID);
+        })
         it('if game isn\'t over, then game_over() returns MoveStatus.SUCCESS',function() {
             gameState.set_curr_board(chess.GameState.default_board());
             assert.equal(gameState.game_over(),chess.MoveStatus.SUCCESS);
-        })
+        });
         it('Stalemate works as it should',function() {
             board = [
             [null, null, null, new chess.King(BLACK, new chess.Location(0,3)), null, null, null, null],
