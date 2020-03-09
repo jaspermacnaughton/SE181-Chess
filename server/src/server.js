@@ -70,6 +70,29 @@ app.post('/api/send_move', (req,res) => {
     if(promotion == undefined){
         promotion = null;
     }
+    var piece = game.get_piece_on_board(start_loc);
+    if(piece == null){
+        res.json({
+            "status": chess.MoveStatus.INVALID,
+            "msg": "Starting location is not a valid piece"
+        });
+        return;
+    }
+    if(piece.get_color() == player){
+        res.json({
+            "status": chess.MoveStatus.INVALID,
+            "msg": "Cannot move other player's pieces"
+        });
+        return;
+    }
+
+    if(game.get_curr_player() == player){
+        res.json({
+            "status": chess.MoveStatus.INVALID,
+            "msg": "Attempting to move out of turn"
+        });
+        return;
+    }
 
     var stat = game.play_move(start_loc, end_loc, promotion);
     // update global state for sync with other player
@@ -124,6 +147,21 @@ app.post('/api/get_moves', (req,res) => {
     }
 
     var piece = game.get_piece_on_board(new chess.Location(piece_loc.row, piece_loc.col));
+    if(piece === null){
+        res.json({
+            "status" :chess.MoveStatus.INVALID,
+            "msg": "No piece at location, need to sync"
+        });
+        return;
+    }
+    if(piece.get_color() == player){
+        res.json({
+            "status": chess.MoveStatus.INVALID,
+            "msg": "Cannot move other player's pieces"
+        });
+        return;
+    }
+
     var moves = piece.get_moves(game);
 
     res.json({
