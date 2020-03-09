@@ -373,6 +373,21 @@ describe('king', function (){
         it('King cannot capture same color piece', function(){
             assert.equal(1,1);
         });
+        it('King can castle when not in check', function(){
+            board = [
+                [new chess.Rook(BLACK, new chess.Location(0,0)),null,null,null,new chess.King(BLACK,new chess.Location(0,4)),null,null,new chess.Rook(BLACK, new chess.Location(0,7))],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [null,null,null,null,null,null,null,null],
+                [new chess.Rook(WHITE, new chess.Location(7,0)),null,null,null,new chess.King(WHITE,new chess.Location(7,4)),null,null,new chess.Rook(WHITE, new chess.Location(7,7))]];
+            gameState.set_curr_board(board);
+            var start = new chess.Location(0,4);
+            var end = new chess.Location(0,6);
+            assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.SUCCESS);
+        });
     });
 });
 
