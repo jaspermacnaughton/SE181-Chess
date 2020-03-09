@@ -142,7 +142,7 @@ describe('gameState', function (){
             gameState.set_curr_player(BLACK);
             var start = new chess.Location(6,2);
             var end = new chess.Location(7,2);
-            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.INVALID);
+            assert.equal(gameState.play_move(start,end,"invalid"),chess.MoveStatus.PROMOTION_REQUIRED);
             gameState.set_curr_board(board);
             gameState.set_curr_player(BLACK);
             assert.equal(gameState.play_move(start,end,"Knight"),chess.MoveStatus.SUCCESS);
