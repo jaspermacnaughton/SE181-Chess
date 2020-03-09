@@ -202,13 +202,63 @@ describe('rook', function(){
 describe('bishop', function(){
     var defaultState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
     var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
-    var color = chess.Players.WHITE.COLOR;
+    var color = chess.Players.BLACK.COLOR;
     describe('#get_moves()',function(){
         var location = new chess.Location(0,0);
         var bishop = new chess.Bishop(color,location);
         var moves = bishop.get_moves(emptyState);
         it('Bishop can move diagnoally any number of spaces', function (){
             assert.equal(moves.length, 7);
+        });
+        it('Bishop cannot move if blocked', function() {
+            location.set(0,2);
+            bishop.set_location(location);
+            moves = bishop.get_moves(defaultState);
+            assert.equal(moves.length,0);
+        });
+    });
+});
+
+describe('knight',function(){
+    var defaultState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
+    var color = chess.Players.BLACK.COLOR;
+    describe('#get_moves()',function(){
+        var location = new chess.Location(0,0);
+        var knight = new chess.Knight(color,location);
+        var moves = knight.get_moves(emptyState);
+        it('Knight can move one vertically and two horizontally, and vice versa', function (){
+            assert.equal(moves.length, 2);
+            location.set(3,3);
+            knight.set_location(location);
+            moves = knight.get_moves(emptyState);
+            assert.equal(moves.length, 8);
+        });
+        it('Knight can hop over pieces if blocked by same color', function() {
+            location.set(0,1);
+            knight.set_location(location);
+            moves = knight.get_moves(defaultState);
+            assert.equal(moves.length,2);
+        });
+    });
+});
+
+describe('queen', function(){
+    var defaultState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
+    var color = chess.Players.BLACK.COLOR;
+    describe('#get_moves()',function(){
+        var location = new chess.Location(0,0);
+        var queen = new chess.Queen(color,location);
+        var moves = queen.get_moves(emptyState);
+        it('Queen can move horizontally, vertically, or diagonally any number of spaces', function(){
+            assert.equal(moves.length,21);
+        });
+        it('Queen cannot move if blocked', function() {
+            location.set(0,3);
+            queen.set_location(location);
+            moves = queen.get_moves(defaultState);
+            assert.equal(moves.length,0);
         });
     });
 });
