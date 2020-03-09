@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MoveStatus } from './game/models/MoveStatus.model';
 import { Location } from './game/models/Location.model';
-import { GameState } from './game/models/GameState.model';
 import { Piece } from './game/models/Piece.model';
 
 export interface ColorResponse {
