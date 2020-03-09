@@ -4,6 +4,7 @@ import { GameState } from './models/GameState.model';
 import { Location } from './models/Location.model';
 import { MoveStatus } from './models/MoveStatus.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-game',
@@ -21,7 +22,7 @@ export class GameComponent implements OnInit {
   selectedPiece: Location;
   selectedPieceMoves: Location[];
 
-  constructor(private requestService: RequestService, private snackbar: MatSnackBar) { }
+  constructor(private requestService: RequestService, private snackbar: MatSnackBar, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.boardLoaded = false;
@@ -99,9 +100,7 @@ export class GameComponent implements OnInit {
 
   onClickSquare(row: number, col: string) {
     if (!this.isTurn) {
-      this.snackbar.open("Not your turn", "Dismiss", {
-        duration: 5000,
-      });
+      this.openSnackBar("Not your turn", 5);
       return;
     }
     const clickedLocation = new Location(row, col);
@@ -114,11 +113,21 @@ export class GameComponent implements OnInit {
 
       this.selectedPiece = clickedLocation;
       this.requestService.getMoves(clickedLocation).subscribe(res => {
-        res.moves.forEach(move => {
-          console.log("Returned: row=" + move.row + ", col=" + move.col);
-          const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
-          this.selectedPieceMoves.push(moveObject);
-        });
+        if (res.status === "Success") {
+          res.moves.forEach(move => {
+            console.log("Added move");
+
+            const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
+            this.selectedPieceMoves.push(moveObject);
+          });
+        } else if (res.status === "Invalid") {
+          this.openSnackBar(res.msg, 5);
+        } else if (res.status === "PromotionRequired") {
+          this.openSnackBar("Promotion!", 5);
+        } else {
+          console.log("Unknown response status: " + res.status);
+          console.log(res);
+        }
       });
     } else {
       // Piece has already been selected - if in selected piece array make move
@@ -144,13 +153,20 @@ export class GameComponent implements OnInit {
 
   private moveSelectedPiece(location: Location) {
     this.requestService.sendMove(this.selectedPiece, location).subscribe(res => {
-      // if (res.status === MoveStatus.Success) {
+      if (res.status === "Success") {
         this.gameState.move(this.selectedPiece, location);
         this.selectedPiece = null;
         this.selectedPieceMoves = [];
-      // } else {
-      //   console.log("Error moving piece: " + res.status);
-      // }
+        this.isTurn = false;
+      } else {
+        console.log("Error moving piece: " + res.status);
+      }
+    });
+  }
+
+  private openSnackBar(message: string, numSeconds: number) {
+    this.snackbar.open(message, "Dismiss", {
+      duration: numSeconds * 1000,
     });
   }
 
@@ -169,6 +185,7 @@ export class GameComponent implements OnInit {
 
   onSync() {
     this.requestService.sync().subscribe(res => {
+      console.log(res);
       this.gameState.updateState(res.GameState.board);
     });
   }

@@ -74,13 +74,12 @@ describe('gameState', function (){
             [null, null, null, null, null, null, null, null],
             [null, null, null, null, null, null, null, new chess.King(WHITE, new chess.Location(7,7))]];
             gameState.set_curr_board(board);
+            gameState.current_player = chess.Players.WHITE.COLOR;
             var start = new chess.Location(1,3);
             var end = new chess.Location(0,3);
-            assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.SUCCESS);
+            assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.SUCCESS_CHECK);
             assert.equal(gameState.in_check(BLACK), true);
-            start.set(0,0);
-            end.set(0,1);
-            assert.equal(gameState.game_over(),chess.MovesStatus.WHITE_WIN);
+            assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
             assert.equal(gameState.play_move(start,end,null),chess.MoveStatus.INVALID);
             assert.equal(gameState.game_over(),chess.MoveStatus.WHITE_WIN);
         });
