@@ -121,6 +121,7 @@ export class GameComponent implements OnInit {
         }
         if (clickedLocation.isEqual(potentialMove)) {
           this.moveSelectedPiece(clickedLocation);
+          return;
         }
       });
       this.selectedPiece = null;
@@ -129,14 +130,15 @@ export class GameComponent implements OnInit {
   }
 
   private moveSelectedPiece(location: Location) {
+    this.requestService.sendMove(this.selectedPiece, location);
     this.gameState.move(this.selectedPiece, location);
   }
 
   onRestart() {
-
+    this.requestService.restart();
   }
 
   onResign() {
-
+    this.requestService.resign();
   }
 }
