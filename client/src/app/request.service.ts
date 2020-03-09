@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { MoveStatus } from './game/models/MoveStatus.model';
 import { Location } from './game/models/Location.model';
-import { Observable } from 'rxjs';
+import { GameState } from './game/models/GameState.model';
+import { Piece } from './game/models/Piece.model';
 
 export interface ColorResponse {
   color: string;
@@ -47,7 +47,7 @@ export class RequestService {
   }
 
   sendMove(start: Location, end: Location) {
-    return this.http.post("/api/send_move", {
+    return this.http.post<{status: MoveStatus}>("/api/send_move", {
       start: this.convertToNumericLocation(start),
       end: this.convertToNumericLocation(end)
     });
@@ -58,10 +58,10 @@ export class RequestService {
   }
 
   restart() {
-    return this.http.post("/api/restart", {});
+    return this.http.post<{status: MoveStatus}>("/api/restart", {});
   }
 
   sync() {
-    return this.http.post("/api/sync", {});
+    return this.http.post<{GameState: {board: Piece[][]}}>("/api/sync", {});
   }
 }
