@@ -178,15 +178,16 @@ describe('pawn', function (){
 describe('rook', function(){
     var defaultState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
     var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
-    var color = chess.Players.WHITE.COLOR;
+    var color = chess.Players.BLACK.COLOR;
     describe('#get_moves()',function(){
         var location = new chess.Location(0,0);
         var rook = new chess.Rook(color,location);
         var moves = rook.get_moves(emptyState);
-        it ('Rook can move horizontally or vertically any number of squares', function (){
+        it ('Rook can move horizontally or vertically any number of spaces', function (){
             assert.equal(moves.length, 14);
             location.set(7,7);
             rook.set_location(location);
+            moves = rook.get_moves(emptyState);
             assert.equal(moves.length,14);
         });
         it ('Rook cannot move if blocked', function(){
@@ -194,6 +195,20 @@ describe('rook', function(){
             rook.set_location(location);
             moves = rook.get_moves(defaultState);
             assert.equal(moves.length,0);
+        });
+    });
+});
+
+describe('bishop', function(){
+    var defaultState = new chess.GameState(chess.GameState.default_board(), Players, Player2);
+    var emptyState = new chess.GameState(chess.GameState.empty_board(), Players, Player2);
+    var color = chess.Players.WHITE.COLOR;
+    describe('#get_moves()',function(){
+        var location = new chess.Location(0,0);
+        var bishop = new chess.Bishop(color,location);
+        var moves = bishop.get_moves(emptyState);
+        it('Bishop can move diagnoally, horizontally, or vertically any number of spaces', function (){
+            assert.equal(moves, 21);
         });
     });
 });
