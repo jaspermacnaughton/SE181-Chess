@@ -237,7 +237,7 @@ class GameState {
   in_check(player){
     var row, col;
     var attacked_positions = [];
-    var player_king = undefined;
+    var player_king;
     for (row = 0; row < this.board.length; row++) {
       for (col = 0; col < this.board[0].length; col++) {
         var piece = this.board[row][col];
@@ -291,7 +291,7 @@ class GameState {
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
           [null,null,null,null,null,null,null,null],
-      ]
+      ];
   }
 }
 class Piece {
