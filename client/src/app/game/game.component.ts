@@ -119,18 +119,22 @@ export class GameComponent implements OnInit {
       });
     } else {
       // Piece has already been selected - if in selected piece array make move
-      this.selectedPieceMoves.forEach(potentialMove => {
-        if (clickedLocation.isEqual(this.selectedPiece)) {
-          // If user just clicks back on selected piece just unselect all
-          this.selectedPiece = null;
-          this.selectedPieceMoves = [];
-          return;
-        }
-        if (clickedLocation.isEqual(potentialMove)) {
-          this.moveSelectedPiece(clickedLocation);
-          return;
-        }
-      });
+      if (this.selectedPieceMoves.length < 1) {
+        this.selectedPiece = null;
+      } else {
+        this.selectedPieceMoves.forEach(potentialMove => {
+          if (clickedLocation.isEqual(this.selectedPiece)) {
+            // If user just clicks back on selected piece just unselect all
+            this.selectedPiece = null;
+            this.selectedPieceMoves = [];
+            return;
+          }
+          if (clickedLocation.isEqual(potentialMove)) {
+            this.moveSelectedPiece(clickedLocation);
+            return;
+          }
+        });
+      }
     }
   }
 
