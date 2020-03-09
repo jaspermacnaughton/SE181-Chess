@@ -32,8 +32,7 @@ export class RequestService {
   getMoves(location: Location) {
     const numericRow = 8 - location.row;
     const numericCol = location.col.charCodeAt(0) - 97;
-    console.log("getMoves() with row = " + numericRow);
-    console.log("            and col = " + numericCol);
+    console.log("getMoves() with row=" + numericRow + ", col=" + numericCol);
     return this.http.post<{status: MoveStatus, moves: {row: number, col: number}[]}>("/api/get_moves", {
       piece: {
         row: numericRow,

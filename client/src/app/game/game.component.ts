@@ -91,7 +91,6 @@ export class GameComponent implements OnInit {
   }
 
   onClickSquare(row: number, col: string) {
-    console.log("WARNING: not checking whether its your turn!");
     // if (!this.isTurn) {
     //   console.log("Not your turn");
     //   return;
@@ -107,8 +106,8 @@ export class GameComponent implements OnInit {
 
       this.selectedPiece = clickedLocation;
       this.requestService.getMoves(clickedLocation).subscribe(res => {
-        console.log(res.moves);
         res.moves.forEach(move => {
+          console.log("Returned: row=" + move.row + ", col=" + move.col);
           const moveObject = new Location(8 - move.row, String.fromCharCode(move.col + 97));
           this.selectedPieceMoves.push(moveObject);
         });
